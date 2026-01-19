@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import QRCode from './QRCode';
+import QRCode from './QRCode.tsx';
 
 export interface SmartTextProps {
   initialValue: string;
@@ -123,8 +123,10 @@ export const SmartText: React.FC<SmartTextProps> = ({
     fontSize: `${size}pt`,
     fontWeight: bold ? 700 : 400,
     textAlign: align,
-    fontFamily: font === 'mono' ? '"JetBrains Mono", monospace' : '"Inter", sans-serif',
-    lineHeight: 1.1,
+    fontFamily: font === 'mono' ? '"JetBrains Mono", monospace' : '"Inter", "Kantumruy Pro", sans-serif',
+    lineHeight: 1.4, // Increased for Khmer characters
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
     cursor: isDesignMode ? 'grab' : 'default',
     display: block ? 'block' : 'inline-block',
     width: block ? '100%' : 'auto',
@@ -137,7 +139,7 @@ export const SmartText: React.FC<SmartTextProps> = ({
   return (
     <div
       onMouseDown={handleMouseDown}
-      className={`relative transition-all rounded ${isDesignMode && !isSelected ? 'hover:outline hover:outline-1 hover:outline-black/20' : ''} ${isSelected ? 'ring-1 ring-black/30 bg-black/5' : ''} ${className}`}
+      className={`relative rounded ${isDesignMode && !isSelected ? 'hover:outline hover:outline-1 hover:outline-black/20' : ''} ${isSelected ? 'ring-1 ring-black/30 bg-black/5' : ''} ${className}`}
       style={style}
     >
       {text}

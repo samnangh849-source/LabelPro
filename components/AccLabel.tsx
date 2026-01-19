@@ -1,18 +1,16 @@
 
 import React from 'react';
-import { LabelData } from '../types';
-import { SmartText, SmartQR } from './SmartElements';
+import { LabelData } from '../types.ts';
+import { SmartText, SmartQR } from './SmartElements.tsx';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 interface AccLabelProps {
   data: LabelData;
   qrValue: string;
   isDesignMode: boolean;
-  lineLeft?: number;
-  lineRight?: number;
 }
 
-const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode, lineLeft = 0, lineRight = 2.5 }) => {
+const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode }) => {
   const totalAmount = parseFloat(data.total);
   const paymentLower = data.payment.toLowerCase();
   
@@ -28,69 +26,91 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode, lineLe
   const paymentLabel = getPaymentLabel(data.payment);
 
   return (
-    <div className="flex flex-col h-full bg-white text-black font-sans p-0.5 relative overflow-hidden">
+    <div className="flex flex-col w-[80mm] h-[60mm] bg-white text-black font-sans relative overflow-hidden box-border p-0.5">
+        {/* Background Status Indicator */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-            <span className="text-[72pt] font-black uppercase rotate-[-25deg] opacity-[0.08] text-black">
+            <span className="text-[64pt] font-black uppercase rotate-[-25deg] opacity-[0.05] text-black">
                 {isPaid ? 'PAID' : (isCOD ? 'C.O.D' : 'ORDER')}
             </span>
         </div>
 
-        <div className="flex-1 border-black rounded-lg flex flex-col overflow-hidden relative z-10 bg-transparent" style={{ borderWeight: `${lineRight}px`, borderStyle: 'solid', borderWidth: `${lineRight}px` }}>
+        <div className="flex-1 border-[2.5px] border-black rounded-lg flex flex-col overflow-hidden relative z-10 bg-transparent">
+            {/* Header with Store and Order ID */}
             <div className="bg-black text-white px-2 py-1 flex justify-between items-center shrink-0">
-                <SmartText isDesignMode={isDesignMode} initialValue={data.store} baseSize={11} bold font="sans" className="text-white" />
-                <div className="bg-white text-black px-1 py-0.5 rounded text-[6.5pt] font-mono font-bold">#{data.id}</div>
+                <SmartText isDesignMode={isDesignMode} initialValue={data.store} baseSize={10} bold font="sans" className="text-white" />
+                <div className="bg-white text-black px-1 py-0.5 rounded text-[6pt] font-mono font-bold">#{data.id}</div>
             </div>
 
-            <div className="flex flex-1 min-h-0 overflow-hidden">
-                <div className="flex-1 p-2 flex flex-col gap-0.5 min-w-0">
-                    <span className="text-[5.5pt] uppercase tracking-wider text-black opacity-40 font-bold">Deliver To</span>
-                    <SmartText isDesignMode={isDesignMode} initialValue={data.name} baseSize={11} bold font="sans" block />
-                    <SmartText isDesignMode={isDesignMode} initialValue={data.phone} baseSize={10} bold font="sans" block />
-                    <div className="mt-auto pt-1 border-t border-black/10">
-                        <SmartText isDesignMode={isDesignMode} initialValue={data.location} baseSize={8} bold font="sans" />
-                        <SmartText isDesignMode={isDesignMode} initialValue={data.address} baseSize={7.5} font="sans" block className="leading-tight" />
+            {/* Split Content Area */}
+            <div className="flex flex-1 min-h-0">
+                <div className="flex-1 p-2 flex flex-col gap-1 min-w-0">
+                    <span className="text-[5pt] uppercase tracking-wider text-black opacity-40 font-bold block shrink-0">Recipient Delivery</span>
+                    
+                    <div className="flex flex-wrap items-baseline gap-2 shrink-0">
+                        <SmartText isDesignMode={isDesignMode} initialValue={data.name} baseSize={11} bold font="sans" />
+                        <SmartText isDesignMode={isDesignMode} initialValue={data.phone} baseSize={11} bold font="sans" />
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col justify-center min-h-0 overflow-hidden">
+                        <div className="border-t border-black/10 pt-1">
+                            {/* Location - Larger for sorting */}
+                            <span className="text-[4.5pt] font-black opacity-30 uppercase block leading-none mb-0.5">Target Location</span>
+                            <SmartText isDesignMode={isDesignMode} initialValue={data.location} baseSize={13} bold font="sans" block className="leading-tight" />
+                        </div>
+                        
+                        <div className="mt-1.5 overflow-hidden">
+                             <span className="text-[4.5pt] font-black opacity-30 uppercase block leading-none mb-0.5">Exact Address</span>
+                             <SmartText isDesignMode={isDesignMode} initialValue={data.address} baseSize={8.5} font="sans" block className="leading-tight opacity-80" />
+                        </div>
                     </div>
                 </div>
 
-                <div className="w-[30mm] border-l-[2px] border-black p-1 flex flex-col items-center text-center shrink-0 min-h-0 overflow-hidden">
-                    <div className="bg-white p-0.5 rounded border border-black/10 mb-1">
-                         <SmartQR value={qrValue} baseSize={52} isDesignMode={isDesignMode} />
+                {/* Right Sidebar: QR and Logistics */}
+                <div className="w-[28mm] border-l-[2px] border-black p-1 flex flex-col items-center text-center shrink-0 bg-white/40">
+                    <div className="bg-white p-0.5 rounded border border-black/10 mb-1 shrink-0">
+                         <SmartQR value={qrValue} baseSize={50} isDesignMode={isDesignMode} />
                     </div>
-                    <div className="w-full mb-1 flex justify-between items-center px-0.5 border-b border-black/10 pb-0.5">
-                        <span className="text-[4.5pt] text-black opacity-40 font-bold">DATE:</span>
+                    
+                    <div className="w-full mb-1 flex justify-between items-center px-0.5 border-b border-black/10 pb-0.5 shrink-0">
+                        <span className="text-[4pt] text-black opacity-40 font-bold">DATE:</span>
                         <SmartText isDesignMode={isDesignMode} initialValue={data.date} baseSize={5.5} font="mono" />
                     </div>
-                    <div className="w-full mb-1 bg-black/5 px-1 py-0.5 rounded border border-black/10 flex flex-col items-start">
-                        <span className="text-[4pt] text-black opacity-40 uppercase font-black">VIA:</span>
-                        <SmartText isDesignMode={isDesignMode} initialValue={data.shipping} baseSize={7} bold font="sans" align="left" block />
+                    
+                    <div className="w-full mb-1 bg-black/5 px-1 py-0.5 rounded border border-black/10 flex flex-col items-start shrink-0">
+                        <span className="text-[4pt] text-black opacity-40 uppercase font-black">SHIPPER:</span>
+                        <SmartText isDesignMode={isDesignMode} initialValue={data.shipping} baseSize={6.5} bold font="sans" align="left" block />
                     </div>
+
+                    {/* Dynamic Status Section */}
                     <div className="w-full mt-auto flex flex-col gap-0.5">
                         {isPaid ? (
                             <div className="bg-white text-black rounded p-1 border-[1.5px] border-black">
                                 <div className="flex items-center justify-center gap-0.5 mb-0.5 text-black">
-                                    <CheckCircle2 size={8} className="text-black" /><span className="text-[5.5pt] font-black uppercase">PAID FULL</span>
+                                    <CheckCircle2 size={7} className="text-black" /><span className="text-[5pt] font-black uppercase">PAID</span>
                                 </div>
-                                <SmartText isDesignMode={isDesignMode} initialValue={`$${data.total}`} baseSize={11} bold font="sans" align="center" block className="opacity-30 line-through" />
+                                <SmartText isDesignMode={isDesignMode} initialValue={`$${data.total}`} baseSize={9} bold font="sans" align="center" block className="opacity-30 line-through" />
                             </div>
                         ) : (isCOD ? (
                             <div className="bg-black text-white rounded p-1 border-[1.5px] border-black">
-                                <div className="flex items-center justify-center gap-0.5 mb-0.5 bg-white text-black px-0.5 rounded-[1.5px]">
-                                    <AlertTriangle size={6} strokeWidth={4} /><span className="text-[5.5pt] font-black uppercase">COD UNPAID</span>
+                                <div className="flex items-center justify-center gap-0.5 mb-0.5 bg-white text-black px-0.5 rounded-[1px]">
+                                    <AlertTriangle size={6} strokeWidth={4} /><span className="text-[5pt] font-black uppercase tracking-tighter">COD DUE</span>
                                 </div>
-                                <SmartText isDesignMode={isDesignMode} initialValue={`$${data.total}`} baseSize={14} bold font="sans" align="center" block className="text-white" />
+                                <SmartText isDesignMode={isDesignMode} initialValue={`$${data.total}`} baseSize={13} bold font="sans" align="center" block className="text-white" />
                             </div>
                         ) : (
                             <div className="bg-white text-black rounded p-1 border border-black/20">
-                                <span className="text-[6pt] font-bold">NO CHARGE</span>
+                                <span className="text-[6pt] font-bold">UNSPECIFIED</span>
                             </div>
                         ))}
-                        <SmartText isDesignMode={isDesignMode} initialValue={paymentLabel} baseSize={6.5} bold font="sans" />
+                        <SmartText isDesignMode={isDesignMode} initialValue={paymentLabel} baseSize={6} bold font="sans" />
                     </div>
                 </div>
             </div>
-            <div className="bg-black/5 border-t-[1.5px] border-black py-0.5 text-center flex justify-between px-2 shrink-0">
-                 <SmartText isDesignMode={isDesignMode} initialValue={data.page || "STORE"} baseSize={6.5} font="sans" bold />
-                 <span className="text-[4.5pt] text-black opacity-40 font-bold uppercase">Professional Delivery</span>
+
+            {/* Bottom Info Stripe */}
+            <div className="bg-black/5 border-t-[1.5px] border-black h-[4.5mm] flex items-center justify-between px-2 shrink-0">
+                 <SmartText isDesignMode={isDesignMode} initialValue={data.page || "STORE"} baseSize={6} font="sans" bold />
+                 <span className="text-[4pt] text-black opacity-40 font-bold uppercase">PRO DELIVERY SYSTEM</span>
             </div>
         </div>
     </div>
