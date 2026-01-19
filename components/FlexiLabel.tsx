@@ -7,9 +7,11 @@ interface FlexiLabelProps {
   data: LabelData;
   qrValue: string;
   isDesignMode: boolean;
+  lineLeft?: number;
+  lineRight?: number;
 }
 
-const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) => {
+const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode, lineLeft = 0, lineRight = 3 }) => {
   const totalAmount = parseFloat(data.total);
   const paymentLower = data.payment.toLowerCase();
   
@@ -35,8 +37,8 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                 </div>
             </div>
 
-            <div className="flex border-b-[3px] border-black h-[10mm] shrink-0 relative z-10 bg-white">
-                <div className="w-[12mm] bg-[repeating-linear-gradient(45deg,#000,#000_2px,#fff_2px,#fff_4px)] border-r-[3px] border-black flex items-center justify-center">
+            <div className="flex border-black h-[10mm] shrink-0 relative z-10 bg-white" style={{ borderBottomWidth: `${lineRight}px` }}>
+                <div className="w-[12mm] bg-[repeating-linear-gradient(45deg,#000,#000_2px,#fff_2px,#fff_4px)] border-black flex items-center justify-center" style={{ borderRightWidth: `${lineRight}px` }}>
                     <div className="bg-white px-1 border-2 border-black rotate-90 text-[7pt] font-black tracking-widest">PRTY</div>
                 </div>
                 <div className="flex-1 flex flex-col justify-center px-2 min-w-0">
@@ -50,7 +52,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
             </div>
             
             <div className="flex flex-1 min-h-0 overflow-hidden relative z-10 bg-transparent">
-                <div className="flex-1 p-2.5 flex flex-col border-r-[3px] border-black relative min-w-0">
+                <div className="flex-1 p-2.5 flex flex-col border-black relative min-w-0" style={{ borderRightWidth: `${lineRight}px` }}>
                     <div className="absolute top-0 left-0 bg-black text-white px-1 text-[5pt] font-bold">RECIPIENT</div>
                     <div className="mt-2.5">
                         <SmartText isDesignMode={isDesignMode} initialValue={data.name} baseSize={11} bold font="mono" block />
@@ -64,7 +66,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                 </div>
 
                 <div className="w-[28mm] flex flex-col shrink-0 overflow-hidden">
-                    <div className="h-[20mm] border-b-[3px] border-black p-1 flex items-center justify-center bg-white shrink-0">
+                    <div className="h-[20mm] border-black p-1 flex items-center justify-center bg-white shrink-0" style={{ borderBottomWidth: `${lineRight}px` }}>
                         <SmartQR value={qrValue} baseSize={55} isDesignMode={isDesignMode} />
                     </div>
                     <div className="flex-1 flex flex-col p-1 gap-0.5 min-h-0 overflow-hidden">
@@ -72,7 +74,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                             <div className="flex flex-col"><span className="text-[4.5pt] font-bold opacity-60">VIA:</span><SmartText isDesignMode={isDesignMode} initialValue={data.shipping} baseSize={6.5} bold font="mono" /></div>
                             <div className="flex justify-between items-center pt-0.5"><span className="text-[4.5pt] font-bold">PAY:</span><SmartText isDesignMode={isDesignMode} initialValue={paymentLabel} baseSize={5.5} font="mono" align="right" /></div>
                         </div>
-                        <div className={`flex-1 border-[3px] border-black w-full relative flex flex-col items-center justify-center ${isPaid ? 'bg-white text-black' : 'bg-black text-white'}`}>
+                        <div className={`flex-1 border-black w-full relative flex flex-col items-center justify-center ${isPaid ? 'bg-white text-black' : 'bg-black text-white'}`} style={{ borderWidth: `${lineRight}px` }}>
                             {isPaid ? (
                                 <div className="relative z-10 flex flex-col items-center justify-center px-1">
                                     <div className="text-[5.5pt] font-black mb-0.5 border border-black px-1">PREPAID</div>

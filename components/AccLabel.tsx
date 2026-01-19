@@ -8,9 +8,11 @@ interface AccLabelProps {
   data: LabelData;
   qrValue: string;
   isDesignMode: boolean;
+  lineLeft?: number;
+  lineRight?: number;
 }
 
-const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode }) => {
+const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode, lineLeft = 0, lineRight = 2.5 }) => {
   const totalAmount = parseFloat(data.total);
   const paymentLower = data.payment.toLowerCase();
   
@@ -33,7 +35,7 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode }) => {
             </span>
         </div>
 
-        <div className="flex-1 border-[2.5px] border-black rounded-lg flex flex-col overflow-hidden relative z-10 bg-transparent">
+        <div className="flex-1 border-black rounded-lg flex flex-col overflow-hidden relative z-10 bg-transparent" style={{ borderWeight: `${lineRight}px`, borderStyle: 'solid', borderWidth: `${lineRight}px` }}>
             <div className="bg-black text-white px-2 py-1 flex justify-between items-center shrink-0">
                 <SmartText isDesignMode={isDesignMode} initialValue={data.store} baseSize={11} bold font="sans" className="text-white" />
                 <div className="bg-white text-black px-1 py-0.5 rounded text-[6.5pt] font-mono font-bold">#{data.id}</div>
