@@ -1,7 +1,8 @@
+
 import React from 'react';
-import { LabelData, ThemeType } from '../types';
-import FlexiLabel from './FlexiLabel';
-import AccLabel from './AccLabel';
+import { LabelData, ThemeType } from '../types.ts';
+import FlexiLabel from './FlexiLabel.tsx';
+import AccLabel from './AccLabel.tsx';
 
 interface LabelContentProps {
   data: LabelData;
@@ -12,26 +13,11 @@ interface LabelContentProps {
   isDesignMode: boolean;
 }
 
-const LabelContent: React.FC<LabelContentProps> = ({ data, theme, lineLeft, lineRight, qrValue, isDesignMode }) => {
-  
+const LabelContent: React.FC<LabelContentProps> = ({ data, theme, qrValue, isDesignMode }) => {
   if (theme === ThemeType.FLEXI) {
-    return (
-        <FlexiLabel 
-            data={data} 
-            qrValue={qrValue} 
-            isDesignMode={isDesignMode} 
-        />
-    );
+    return <FlexiLabel data={data} qrValue={qrValue} isDesignMode={isDesignMode} />;
   }
-
-  // Default to ACC Theme
-  return (
-    <AccLabel 
-        data={data} 
-        qrValue={qrValue} 
-        isDesignMode={isDesignMode} 
-    />
-  );
+  return <AccLabel data={data} qrValue={qrValue} isDesignMode={isDesignMode} />;
 };
 
 export default LabelContent;
