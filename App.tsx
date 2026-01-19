@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { LabelData, Margins, ThemeType } from './types';
 import LabelPreview from './components/LabelPreview';
 import Controls from './components/Controls';
-import { Printer, MapPin, Box, Zap, Command } from 'lucide-react';
+import { Printer, MapPin, Box, Command } from 'lucide-react';
 
 const useLabelData = () => {
   const [data, setData] = useState<LabelData>({
@@ -188,11 +188,41 @@ const App: React.FC = () => {
       </main>
 
       <style>{`
-        @page { size: 80mm 60mm; margin: 0; }
         @media print {
-            body { background: white !important; color: black !important; }
+            @page { size: 80mm 60mm; margin: 0; }
+            body { background: white !important; color: black !important; margin: 0 !important; width: 80mm; height: 60mm; }
             .no-print { display: none !important; }
-            .printable-label { transform: none !important; box-shadow: none !important; margin: 0 !important; border: none !important; }
+            #root, #root > div { display: block !important; height: auto !important; }
+            
+            /* Logic to rotate vertical content for Flexi Gear onto landscape 80x60 paper */
+            .printable-label { 
+              transform-origin: center !important;
+              box-shadow: none !important; 
+              margin: 0 !important; 
+              border: none !important;
+              position: absolute !important;
+              top: 50% !important;
+              left: 50% !important;
+              z-index: 9999 !important;
+              page-break-after: always;
+            }
+
+            /* Theme specific rotation logic */
+            .theme-flexi-gear {
+                width: 60mm !important;
+                height: 80mm !important;
+                /* Center 60x80 inside 80x60 paper then rotate */
+                transform: translate(-50%, -50%) rotate(-90deg) !important;
+            }
+
+            .theme-acc-store {
+                width: 80mm !important;
+                height: 60mm !important;
+                transform: translate(-50%, -50%) !important;
+            }
+
+            body.print-mode-label .qr-preview-container { display: none !important; }
+            body.print-mode-qr .label-preview-container { display: none !important; }
         }
       `}</style>
     </div>
