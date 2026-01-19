@@ -27,7 +27,7 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode }) => {
 
   return (
     <div className="flex flex-col w-[80mm] h-[60mm] bg-white text-black font-sans relative overflow-hidden box-border p-0.5">
-        {/* Background Status Indicator */}
+        {/* Background Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
             <span className="text-[64pt] font-black uppercase rotate-[-25deg] opacity-[0.05] text-black">
                 {isPaid ? 'PAID' : (isCOD ? 'C.O.D' : 'ORDER')}
@@ -35,53 +35,49 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode }) => {
         </div>
 
         <div className="flex-1 border-[2.5px] border-black rounded-lg flex flex-col overflow-hidden relative z-10 bg-transparent">
-            {/* Header with Store and Order ID */}
+            {/* Header */}
             <div className="bg-black text-white px-2 py-1 flex justify-between items-center shrink-0">
                 <SmartText isDesignMode={isDesignMode} initialValue={data.store} baseSize={10} bold font="sans" className="text-white" />
                 <div className="bg-white text-black px-1 py-0.5 rounded text-[6pt] font-mono font-bold">#{data.id}</div>
             </div>
 
-            {/* Split Content Area */}
+            {/* Main Info */}
             <div className="flex flex-1 min-h-0">
                 <div className="flex-1 p-2 flex flex-col gap-1 min-w-0">
-                    <span className="text-[5pt] uppercase tracking-wider text-black opacity-40 font-bold block shrink-0">Recipient Delivery</span>
+                    <div className="flex justify-between items-center shrink-0">
+                         <span className="text-[5pt] uppercase tracking-wider text-black opacity-40 font-bold block">Recipient Delivery</span>
+                         <div className="flex items-center gap-1 opacity-60">
+                            <span className="text-[4.5pt] font-bold">DATE:</span>
+                            <SmartText isDesignMode={isDesignMode} initialValue={data.date} baseSize={6} font="mono" />
+                         </div>
+                    </div>
                     
-                    <div className="flex flex-wrap items-baseline gap-2 shrink-0">
+                    <div className="flex flex-wrap items-baseline gap-2 shrink-0 border-b border-black/5 pb-1 mb-0.5">
                         <SmartText isDesignMode={isDesignMode} initialValue={data.name} baseSize={11} bold font="sans" />
+                        <span className="text-black/10 text-[9pt]">|</span>
                         <SmartText isDesignMode={isDesignMode} initialValue={data.phone} baseSize={11} bold font="sans" />
                     </div>
                     
-                    <div className="flex-1 flex flex-col justify-center min-h-0 overflow-hidden">
-                        <div className="border-t border-black/10 pt-1">
-                            {/* Location - Larger for sorting */}
-                            <span className="text-[4.5pt] font-black opacity-30 uppercase block leading-none mb-0.5">Target Location</span>
-                            <SmartText isDesignMode={isDesignMode} initialValue={data.location} baseSize={13} bold font="sans" block className="leading-tight" />
-                        </div>
-                        
-                        <div className="mt-1.5 overflow-hidden">
-                             <span className="text-[4.5pt] font-black opacity-30 uppercase block leading-none mb-0.5">Exact Address</span>
-                             <SmartText isDesignMode={isDesignMode} initialValue={data.address} baseSize={8.5} font="sans" block className="leading-tight opacity-80" />
+                    <div className="flex-1 flex flex-col justify-start min-h-0 overflow-hidden pt-1">
+                        <div className="leading-tight">
+                            {/* Location followed by detail with wrapping */}
+                            <SmartText isDesignMode={isDesignMode} initialValue={data.location} baseSize={13} bold font="sans" className="mr-2 inline-block align-top" />
+                            <SmartText isDesignMode={isDesignMode} initialValue={data.address} baseSize={9} font="sans" className="opacity-80 inline-block align-top" />
                         </div>
                     </div>
                 </div>
 
-                {/* Right Sidebar: QR and Logistics */}
+                {/* Sidebar */}
                 <div className="w-[28mm] border-l-[2px] border-black p-1 flex flex-col items-center text-center shrink-0 bg-white/40">
-                    <div className="bg-white p-0.5 rounded border border-black/10 mb-1 shrink-0">
+                    <div className="bg-white p-0.5 rounded border border-black/10 mb-2 shrink-0">
                          <SmartQR value={qrValue} baseSize={50} isDesignMode={isDesignMode} />
                     </div>
                     
-                    <div className="w-full mb-1 flex justify-between items-center px-0.5 border-b border-black/10 pb-0.5 shrink-0">
-                        <span className="text-[4pt] text-black opacity-40 font-bold">DATE:</span>
-                        <SmartText isDesignMode={isDesignMode} initialValue={data.date} baseSize={5.5} font="mono" />
-                    </div>
-                    
-                    <div className="w-full mb-1 bg-black/5 px-1 py-0.5 rounded border border-black/10 flex flex-col items-start shrink-0">
+                    <div className="w-full mb-1 bg-black/5 px-1 py-1 rounded border border-black/10 flex flex-col items-start shrink-0">
                         <span className="text-[4pt] text-black opacity-40 uppercase font-black">SHIPPER:</span>
                         <SmartText isDesignMode={isDesignMode} initialValue={data.shipping} baseSize={6.5} bold font="sans" align="left" block />
                     </div>
 
-                    {/* Dynamic Status Section */}
                     <div className="w-full mt-auto flex flex-col gap-0.5">
                         {isPaid ? (
                             <div className="bg-white text-black rounded p-1 border-[1.5px] border-black">
@@ -107,9 +103,13 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode }) => {
                 </div>
             </div>
 
-            {/* Bottom Info Stripe */}
+            {/* Bottom Bar */}
             <div className="bg-black/5 border-t-[1.5px] border-black h-[4.5mm] flex items-center justify-between px-2 shrink-0">
-                 <SmartText isDesignMode={isDesignMode} initialValue={data.page || "STORE"} baseSize={6} font="sans" bold />
+                 <div className="flex items-center gap-2">
+                    <SmartText isDesignMode={isDesignMode} initialValue={data.page || "STORE"} baseSize={6} font="sans" bold />
+                    <span className="text-[4pt] text-black opacity-20">|</span>
+                    <SmartText isDesignMode={isDesignMode} initialValue={data.user || "Admin"} baseSize={5.5} font="sans" className="opacity-60" />
+                 </div>
                  <span className="text-[4pt] text-black opacity-40 font-bold uppercase">PRO DELIVERY SYSTEM</span>
             </div>
         </div>
