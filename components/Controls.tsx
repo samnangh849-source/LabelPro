@@ -1,7 +1,12 @@
 
 import React from 'react';
-import { Margins, ThemeType } from '../types.ts';
-import { Sliders, Layout, Zap, RotateCcw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Minus, Plus, MousePointer2, Move, Undo2, Redo2 } from 'lucide-react';
+import { 
+  Printer, RefreshCw, Layout, Smartphone, MousePointer2, Type, Move, 
+  Settings2, Trash2, Plus, GripVertical, Save, Download, Zap, Undo2, 
+  Redo2, ChevronUp, ChevronLeft, ChevronRight, ChevronDown, Minus, 
+  RotateCcw, Sliders 
+} from 'lucide-react';
+import { Margins, ThemeType } from '../types';
 
 interface ControlsProps {
   margins: Margins;

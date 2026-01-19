@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { LabelData, Margins, ThemeType } from '../types.ts';
-import LabelContent from './LabelContent.tsx';
-import QRCode from './QRCode.tsx';
+import { LabelData, Margins, ThemeType } from '../types';
+import LabelContent from './LabelContent';
+import QRCode from './QRCode';
 import { Eye, Printer, MousePointer2 } from 'lucide-react';
 
 interface LabelPreviewProps {

@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import QRCode from './QRCode.tsx';
+import { Move, Type, QrCode } from 'lucide-react';
+import QRCode from './QRCode';
 
-export interface SmartTextProps {
+interface SmartTextProps {
   initialValue: string;
   className?: string;
   isDesignMode: boolean;
@@ -44,13 +45,13 @@ export const SmartText: React.FC<SmartTextProps> = ({
   useEffect(() => { setText(initialValue); }, [initialValue]);
 
   const saveToHistory = (newPos: {x: number, y: number}, newSize: number) => {
-    setHistory(prev => {
+    setHistory((prev: StateSnapshot[]) => {
       const updated = prev.slice(0, historyIndex + 1);
       const last = updated[updated.length - 1];
       if (last && last.pos.x === newPos.x && last.pos.y === newPos.y && last.size === newSize) return prev;
       return [...updated, { pos: { ...newPos }, size: newSize }];
     });
-    setHistoryIndex(prev => prev + 1);
+    setHistoryIndex((prev: number) => prev + 1);
   };
 
   useEffect(() => {
@@ -159,13 +160,13 @@ export const SmartQR: React.FC<{ value: string, baseSize: number, isDesignMode: 
     const hasMoved = useRef(false);
 
     const saveToHistory = (newPos: {x: number, y: number}, newSize: number) => {
-        setHistory(prev => {
+        setHistory((prev: StateSnapshot[]) => {
           const updated = prev.slice(0, historyIndex + 1);
           const last = updated[updated.length - 1];
           if (last && last.pos.x === newPos.x && last.pos.y === newPos.y && last.size === newSize) return prev;
           return [...updated, { pos: { ...newPos }, size: newSize }];
         });
-        setHistoryIndex(prev => prev + 1);
+        setHistoryIndex((prev: number) => prev + 1);
     };
 
     useEffect(() => {

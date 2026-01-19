@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { LabelData } from '../types.ts';
-import { SmartText, SmartQR } from './SmartElements.tsx';
+import { LabelData } from '../types';
+import { SmartText, SmartQR } from './SmartElements';
 
 interface FlexiLabelProps {
   data: LabelData;

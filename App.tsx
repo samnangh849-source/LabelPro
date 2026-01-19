@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { LabelData, Margins, ThemeType } from './types.ts';
-import LabelPreview from './components/LabelPreview.tsx';
-import Controls from './components/Controls.tsx';
+import { LabelData, Margins, ThemeType } from './types';
+import LabelPreview from './components/LabelPreview';
+import Controls from './components/Controls';
 import { Printer, MapPin, Box, Zap, Command } from 'lucide-react';
 
 const useLabelData = () => {

@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { LabelData, ThemeType } from '../types.ts';
-import FlexiLabel from './FlexiLabel.tsx';
-import AccLabel from './AccLabel.tsx';
+import { LabelData, ThemeType } from '../types';
+import FlexiLabel from './FlexiLabel';
+import AccLabel from './AccLabel';
 
 interface LabelContentProps {
   data: LabelData;
