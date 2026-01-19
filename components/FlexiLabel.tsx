@@ -11,11 +11,14 @@ interface FlexiLabelProps {
 
 const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) => {
   const totalAmount = parseFloat(data.total);
-  const isCOD = totalAmount > 0;
+  const paymentLower = data.payment.toLowerCase();
+  
+  // Logic អាជីព៖ ប្រសិនបើមានពាក្យ "paid" ហើយគ្មានពាក្យ "unpaid" នោះមានន័យថាបានបង់រួច
+  const isPaid = paymentLower.includes('paid') && !paymentLower.includes('unpaid');
+  const isCOD = !isPaid && totalAmount > 0;
   
   const getPaymentLabel = (text: string) => {
-      const upperText = text.toUpperCase();
-      if ((isCOD || upperText === 'UNPAID') && !upperText.includes('COD')) {
+      if (isCOD && !text.toUpperCase().includes('COD')) {
           return `${text} (COD)`;
       }
       return text;
@@ -25,8 +28,10 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
   return (
     <div className="flex flex-col h-full bg-white text-black font-mono overflow-hidden relative">
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
-                <div className={`rotate-[-15deg] border-[8px] border-current px-6 py-2 flex flex-col items-center opacity-[0.12] ${isCOD ? 'text-black' : 'text-slate-500'}`}>
-                    <span className="text-[58pt] font-black uppercase tracking-[-0.05em] leading-none">{isCOD ? 'C.O.D' : 'PAID'}</span>
+                <div className="rotate-[-15deg] border-[8px] border-black px-6 py-2 flex flex-col items-center opacity-[0.1]">
+                    <span className="text-[58pt] font-black uppercase tracking-[-0.05em] leading-none">
+                        {isPaid ? 'PAID' : (isCOD ? 'C.O.D' : 'ORDER')}
+                    </span>
                 </div>
             </div>
 
@@ -45,7 +50,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
             </div>
             
             <div className="flex flex-1 min-h-0 overflow-hidden relative z-10 bg-transparent">
-                <div className="flex-1 p-2.5 flex flex-col border-r-[3px] border-black relative min-w-0 bg-white/20">
+                <div className="flex-1 p-2.5 flex flex-col border-r-[3px] border-black relative min-w-0">
                     <div className="absolute top-0 left-0 bg-black text-white px-1 text-[5pt] font-bold">RECIPIENT</div>
                     <div className="mt-2.5">
                         <SmartText isDesignMode={isDesignMode} initialValue={data.name} baseSize={11} bold font="mono" block />
@@ -58,26 +63,26 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                     </div>
                 </div>
 
-                <div className="w-[28mm] flex flex-col shrink-0 overflow-hidden bg-white/60">
+                <div className="w-[28mm] flex flex-col shrink-0 overflow-hidden">
                     <div className="h-[20mm] border-b-[3px] border-black p-1 flex items-center justify-center bg-white shrink-0">
                         <SmartQR value={qrValue} baseSize={55} isDesignMode={isDesignMode} />
                     </div>
                     <div className="flex-1 flex flex-col p-1 gap-0.5 min-h-0 overflow-hidden">
-                        <div className="space-y-0.5 border-b border-black/10 pb-1 bg-white/30">
+                        <div className="space-y-0.5 border-b border-black/10 pb-1">
                             <div className="flex flex-col"><span className="text-[4.5pt] font-bold opacity-60">VIA:</span><SmartText isDesignMode={isDesignMode} initialValue={data.shipping} baseSize={6.5} bold font="mono" /></div>
                             <div className="flex justify-between items-center pt-0.5"><span className="text-[4.5pt] font-bold">PAY:</span><SmartText isDesignMode={isDesignMode} initialValue={paymentLabel} baseSize={5.5} font="mono" align="right" /></div>
                         </div>
-                        <div className={`flex-1 border-[3px] border-black w-full relative flex flex-col items-center justify-center ${isCOD ? 'bg-black' : 'bg-white'}`}>
-                            {isCOD ? (
-                                <div className="relative z-10 flex flex-col items-center justify-center w-full px-1">
-                                    <div className="bg-yellow-400 text-black text-[6.5pt] font-black uppercase px-1 mb-0.5 border border-black">COD DUE</div>
-                                    <SmartText isDesignMode={isDesignMode} initialValue={`$${data.total}`} baseSize={14} bold font="mono" className="text-yellow-400" />
+                        <div className={`flex-1 border-[3px] border-black w-full relative flex flex-col items-center justify-center ${isPaid ? 'bg-white text-black' : 'bg-black text-white'}`}>
+                            {isPaid ? (
+                                <div className="relative z-10 flex flex-col items-center justify-center px-1">
+                                    <div className="text-[5.5pt] font-black mb-0.5 border border-black px-1">PREPAID</div>
+                                    <SmartText isDesignMode={isDesignMode} initialValue={`$${data.total}`} baseSize={10} bold font="mono" className="text-black/30 line-through mb-0.5" />
+                                    <span className="text-[8pt] font-black tracking-widest leading-none bg-black text-white px-1">PAID</span>
                                 </div>
                             ) : (
-                                <div className="relative z-10 flex flex-col items-center justify-center px-1">
-                                    <div className="text-[5.5pt] font-bold mb-0.5 border border-black px-1 opacity-50">PREPAID</div>
-                                    <SmartText isDesignMode={isDesignMode} initialValue={`$${data.total}`} baseSize={11} bold font="mono" className="text-black/30 line-through" />
-                                    <span className="text-[7.5pt] font-black tracking-widest leading-none">PAID</span>
+                                <div className="relative z-10 flex flex-col items-center justify-center w-full px-1">
+                                    <div className="bg-white text-black text-[6.5pt] font-black uppercase px-1 mb-0.5 border border-black">COD DUE</div>
+                                    <SmartText isDesignMode={isDesignMode} initialValue={`$${data.total}`} baseSize={14} bold font="mono" className="text-white" />
                                 </div>
                             )}
                         </div>

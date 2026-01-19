@@ -1,9 +1,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Move, Type, QrCode } from 'lucide-react';
 import QRCode from './QRCode';
 
-interface SmartTextProps {
+export interface SmartTextProps {
   initialValue: string;
   className?: string;
   isDesignMode: boolean;
@@ -45,13 +44,13 @@ export const SmartText: React.FC<SmartTextProps> = ({
   useEffect(() => { setText(initialValue); }, [initialValue]);
 
   const saveToHistory = (newPos: {x: number, y: number}, newSize: number) => {
-    setHistory((prev: StateSnapshot[]) => {
+    setHistory(prev => {
       const updated = prev.slice(0, historyIndex + 1);
       const last = updated[updated.length - 1];
       if (last && last.pos.x === newPos.x && last.pos.y === newPos.y && last.size === newSize) return prev;
       return [...updated, { pos: { ...newPos }, size: newSize }];
     });
-    setHistoryIndex((prev: number) => prev + 1);
+    setHistoryIndex(prev => prev + 1);
   };
 
   useEffect(() => {
@@ -138,7 +137,7 @@ export const SmartText: React.FC<SmartTextProps> = ({
   return (
     <div
       onMouseDown={handleMouseDown}
-      className={`relative transition-all rounded ${isDesignMode && !isSelected ? 'hover:bg-brand-cyan/10' : ''} ${isSelected ? 'ring-1 ring-brand-cyan bg-brand-cyan/5 text-black' : ''} ${className}`}
+      className={`relative transition-all rounded ${isDesignMode && !isSelected ? 'hover:outline hover:outline-1 hover:outline-black/20' : ''} ${isSelected ? 'ring-1 ring-black/30 bg-black/5' : ''} ${className}`}
       style={style}
     >
       {text}
@@ -160,13 +159,13 @@ export const SmartQR: React.FC<{ value: string, baseSize: number, isDesignMode: 
     const hasMoved = useRef(false);
 
     const saveToHistory = (newPos: {x: number, y: number}, newSize: number) => {
-        setHistory((prev: StateSnapshot[]) => {
+        setHistory(prev => {
           const updated = prev.slice(0, historyIndex + 1);
           const last = updated[updated.length - 1];
           if (last && last.pos.x === newPos.x && last.pos.y === newPos.y && last.size === newSize) return prev;
           return [...updated, { pos: { ...newPos }, size: newSize }];
         });
-        setHistoryIndex((prev: number) => prev + 1);
+        setHistoryIndex(prev => prev + 1);
     };
 
     useEffect(() => {
@@ -235,9 +234,9 @@ export const SmartQR: React.FC<{ value: string, baseSize: number, isDesignMode: 
       <div 
         onMouseDown={handleMouseDown}
         style={{ transform: `translate(${pos.x}px, ${pos.y}px)`, cursor: isDesignMode ? 'grab' : 'default', display: 'inline-block', zIndex: isSelected ? 50 : 'auto', position: 'relative' }}
-        className={isDesignMode && !isSelected ? "hover:ring-1 hover:ring-brand-purple rounded" : ""}
+        className={isDesignMode && !isSelected ? "hover:outline hover:outline-1 hover:outline-black/20 rounded" : ""}
       >
-        <div className={isSelected ? "ring-2 ring-brand-purple bg-white shadow-xl" : ""}>
+        <div className={isSelected ? "ring-2 ring-black/30 bg-white" : ""}>
              <QRCode value={value} size={size} />
         </div>
       </div>
