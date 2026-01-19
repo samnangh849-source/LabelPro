@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import QRCode from './QRCode';
+import QRCode from './QRCode.tsx';
 
 export interface SmartTextProps {
   initialValue: string;
@@ -42,6 +42,14 @@ export const SmartText: React.FC<SmartTextProps> = ({
   const hasMoved = useRef(false);
 
   useEffect(() => { setText(initialValue); }, [initialValue]);
+  
+  // Sync size with baseSize when it changes dynamically (e.g., from character count heuristic)
+  // But only if we are NOT in the middle of a design mode session to avoid overwriting user tweaks
+  useEffect(() => {
+    setSize(baseSize);
+    setHistory([{ pos: { x: 0, y: 0 }, size: baseSize }]);
+    setHistoryIndex(0);
+  }, [baseSize]);
 
   const saveToHistory = (newPos: {x: number, y: number}, newSize: number) => {
     setHistory(prev => {
