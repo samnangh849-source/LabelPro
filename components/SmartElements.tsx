@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import QRCode from './QRCode.tsx';
+import QRCode from './QRCode';
 
 export interface SmartTextProps {
   initialValue: string;

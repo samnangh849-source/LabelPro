@@ -1,13 +1,15 @@
 
 import React from 'react';
-import { LabelData } from '../types.ts';
-import { SmartText, SmartQR } from './SmartElements.tsx';
+import { LabelData } from '../types';
+import { SmartText, SmartQR } from './SmartElements';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 interface AccLabelProps {
   data: LabelData;
   qrValue: string;
   isDesignMode: boolean;
+  lineLeft?: number;
+  lineRight?: number;
 }
 
 const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode }) => {
