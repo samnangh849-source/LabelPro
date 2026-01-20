@@ -17,109 +17,113 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
   const isPaid = paymentLower.includes('paid') && !paymentLower.includes('unpaid');
   const isCOD = !isPaid && totalAmount > 0;
   
-  // Logic 1: Auto-scale Location (Province) based on text length
-  // REDUCED SIZES per request
+  // Logic 1: Auto-scale Location (Province)
   const getLocationBaseSize = (text: string) => {
     const len = text.length;
-    if (len <= 3) return 24; // Was 28 -> 24
-    if (len <= 6) return 20; // Was 24 -> 20
-    if (len <= 10) return 16; // Was 18 -> 16
-    return 12; // Was 14 -> 12
+    if (len <= 3) return 34; // Ultra Large (e.g. KHM)
+    if (len <= 5) return 29; 
+    if (len <= 8) return 25; 
+    if (len <= 11) return 21; 
+    if (len <= 14) return 18; 
+    if (len <= 18) return 15;
+    if (len <= 24) return 13;
+    return 11; 
   };
 
-  // Logic 2: Address fits 1 or 2 lines
+  // Logic 2: Address fits STRICTLY 1 or 2 lines
   const getAddressBaseSize = (text: string) => {
     const len = text.length;
-    if (len > 150) return 6;
-    if (len > 110) return 7;
-    if (len > 80) return 8; 
-    if (len > 45) return 9; 
-    return 11; 
+    if (len > 130) return 6;   
+    if (len > 100) return 7;   
+    if (len > 75) return 8;    
+    if (len > 50) return 9;    
+    if (len > 35) return 10;   
+    return 11;                 
+  };
+
+  // Logic 3: Auto-scale Shipping Method to prevent overflow
+  const getShippingBaseSize = (text: string) => {
+    const len = text.length;
+    if (len <= 6) return 10;   // Short names (e.g. VET, J&T) - Large & Bold
+    if (len <= 10) return 9;   // Standard length
+    if (len <= 15) return 8;   // Medium length
+    if (len <= 20) return 7;   // Long names
+    return 6;                  // Very long names
   };
 
   return (
     <div className="flex flex-col w-[60mm] h-[80mm] bg-white text-black font-sans relative box-border overflow-hidden">
         
-        {/* 1. HEADER & STORE IDENTITY - Highly compressed to give max space to Zone BG */}
-        {/* Reduced pt-2 to pt-1.5 and removed pb to pull everything up */}
+        {/* 1. HEADER & STORE IDENTITY */}
         <div className="px-3 pt-1.5 pb-0 flex justify-between items-start shrink-0">
             <div className="flex flex-col">
-                {/* Reduced mb-1 to mb-0.5 to pull ID Code up */}
-                <div className="flex items-center gap-1.5 mb-0.5">
+                <div className="flex items-center gap-1.5 mb-0"> 
                     <div className="w-5 h-5 bg-black rounded-md flex items-center justify-center text-white">
                         <Box size={10} strokeWidth={3} />
                     </div>
                     <SmartText isDesignMode={isDesignMode} initialValue={data.store} baseSize={10} bold font="sans" className="uppercase tracking-tight leading-none" />
                 </div>
-                <div className="pl-1">
-                     {/* ID Code: Changed from text-black/50 to text-black */}
+                <div className="pl-1 -mt-[1px]"> 
                      <SmartText isDesignMode={isDesignMode} initialValue={data.id} baseSize={8} font="mono" className="text-black font-bold" />
                 </div>
             </div>
             <div className="flex flex-col items-end">
-                {/* Created Label: Changed from text-black/30 to text-black */}
                 <span className="text-[5pt] font-bold text-black uppercase tracking-wider">Created</span>
-                <SmartText isDesignMode={isDesignMode} initialValue={data.date} baseSize={6.5} font="mono" bold />
+                <SmartText isDesignMode={isDesignMode} initialValue={data.date} baseSize={6.5} font="mono" bold className="text-black" />
             </div>
         </div>
 
         {/* 2. MAIN LOGISTICS CARD (LOCATION & ADDRESS) */}
-        {/* Changed from bg-gray-100 to bg-black for bolder look per request */}
-        {/* Because header padding is reduced, this 'grow' element naturally expands upwards */}
-        <div className="mx-1 bg-black rounded-2xl p-3 flex flex-col justify-center relative overflow-hidden group grow min-h-0 text-white mt-1">
+        <div className="mx-1 mt-0.5 bg-black rounded-2xl p-3 flex flex-col justify-center relative overflow-hidden group grow min-h-0 text-white">
             {/* Background decoration */}
             <div className="absolute -right-2 -top-2 text-white/10 pointer-events-none">
                 <MapPin size={48} strokeWidth={1.5} />
             </div>
 
-            <div className="relative z-10 flex flex-col">
-                <span className="text-[5pt] font-black uppercase text-white/50 tracking-widest mb-0.5 block">Zone / Location</span>
-                {/* Auto-scaling Location */}
-                <SmartText 
-                    isDesignMode={isDesignMode} 
-                    initialValue={data.location} 
-                    baseSize={getLocationBaseSize(data.location)} 
-                    bold 
-                    font="sans" 
-                    className="uppercase leading-[0.85] tracking-tight text-white mb-0.5" 
-                />
-            </div>
-            
-            <div className="relative z-10 pt-0.5 border-t border-white/20">
-                <div className="flex items-start gap-1">
-                    <ArrowDownRight size={10} className="text-white/50 mt-1 shrink-0" />
-                    {/* Address handles 1 or 2 lines naturally via standard flow and line-height */}
-                    {/* Added BOLD as requested */}
+            <div className="relative z-10 flex flex-col h-full justify-center">
+                <div className="mb-auto pt-0.5"> 
                     <SmartText 
                         isDesignMode={isDesignMode} 
-                        initialValue={data.address} 
-                        baseSize={getAddressBaseSize(data.address)} 
+                        initialValue={data.location} 
+                        baseSize={getLocationBaseSize(data.location)} 
+                        bold 
                         font="sans" 
-                        bold
-                        block 
-                        className="text-white/90 leading-tight" 
+                        className="uppercase leading-[0.85] tracking-tight text-white mb-0.5 whitespace-nowrap" 
                     />
+                </div>
+                
+                {/* Address Section */}
+                <div className="relative z-10 pt-1 border-t border-white/20 mt-0.5">
+                    <div className="flex items-start gap-1">
+                        <ArrowDownRight size={10} className="text-white/50 mt-[3px] shrink-0" />
+                        <SmartText 
+                            isDesignMode={isDesignMode} 
+                            initialValue={data.address} 
+                            baseSize={getAddressBaseSize(data.address)} 
+                            font="sans" 
+                            bold
+                            block 
+                            className="text-white/90 leading-[1.15] line-clamp-2" 
+                        />
+                    </div>
                 </div>
             </div>
         </div>
 
         {/* 3. RECIPIENT INFO & COD INDICATOR */}
-        {/* Reduced px-4 to px-2 to move content left */}
-        <div className="px-2 py-1.5 flex justify-between items-center shrink-0">
+        <div className="px-2 py-1 flex justify-between items-center shrink-0">
             <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-black/5 flex items-center justify-center shrink-0">
-                        {/* User Icon: Changed from text-black/60 to text-black */}
                         <User size={8} className="text-black" />
                     </div>
-                    <SmartText isDesignMode={isDesignMode} initialValue={data.name} baseSize={10} bold font="sans" className="uppercase" />
+                    <SmartText isDesignMode={isDesignMode} initialValue={data.name} baseSize={10} bold font="sans" className="uppercase text-black" />
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-black/5 flex items-center justify-center shrink-0">
-                        {/* Phone Icon: Changed from text-black/60 to text-black */}
                         <Phone size={8} className="text-black" />
                     </div>
-                    <SmartText isDesignMode={isDesignMode} initialValue={data.phone} baseSize={11} bold font="sans" />
+                    <SmartText isDesignMode={isDesignMode} initialValue={data.phone} baseSize={11} bold font="sans" className="text-black" />
                 </div>
             </div>
             
@@ -139,49 +143,45 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
         </div>
 
         {/* 4. FOOTER GRID (QR & PAYMENT) */}
-        <div className="mt-auto m-2 h-[28mm] grid grid-cols-[1fr_1.3fr] gap-2 shrink-0">
+        <div className="mx-2 mb-2 mt-0.5 h-[28mm] grid grid-cols-[1fr_1.3fr] gap-2 shrink-0">
             
-            {/* QR MODULE - Custom Border & Text */}
+            {/* QR MODULE */}
             <div className="bg-white border border-black rounded-xl flex flex-col items-center justify-center relative overflow-hidden pt-1 pb-0.5">
-                {/* Maximized QR Size */}
                 <div className="grow flex items-center justify-center -mt-1">
                    <SmartQR value={qrValue} baseSize={72} isDesignMode={isDesignMode} />
                 </div>
-                {/* Driver Scan Text */}
                 <span className="text-[4.5pt] font-bold uppercase tracking-wider text-black leading-none pb-0.5">(Driver Scan)</span>
             </div>
 
             {/* PRICE & STATUS MODULE */}
-            <div className={`rounded-xl border flex flex-col relative overflow-hidden transition-colors duration-200 
-                ${isCOD 
-                    ? 'bg-black border-black text-white' 
-                    : 'bg-white border-black text-black'
-                }`}>
+            <div className="bg-white border border-black text-black rounded-xl flex flex-col relative overflow-hidden transition-colors duration-200">
                 
-                {/* Method Header */}
-                <div className={`px-2 py-1 flex items-center gap-1.5 border-b border-dashed ${isCOD ? 'border-white/20' : 'border-black/10'}`}>
-                    <Truck size={10} className={isCOD ? 'text-white/60' : 'text-black/60'} />
-                    <SmartText isDesignMode={isDesignMode} initialValue={data.shipping} baseSize={7} bold font="sans" className={`uppercase truncate ${isCOD ? 'text-white/80' : 'text-black/80'}`} />
+                {/* Method Header - DYNAMIC SIZED */}
+                <div className="px-3 py-1.5 flex items-center gap-2 border-b border-dashed border-black/10">
+                    <Truck size={12} className="text-black shrink-0" />
+                    <SmartText 
+                        isDesignMode={isDesignMode} 
+                        initialValue={data.shipping} 
+                        baseSize={getShippingBaseSize(data.shipping)} 
+                        bold 
+                        font="sans" 
+                        className="uppercase text-black whitespace-nowrap" 
+                    />
                 </div>
 
                 {/* Main Price Area */}
                 <div className="flex-1 flex flex-col items-center justify-center pb-1">
-                    {/* Total/Collect Amount Label: Changed to solid text (black or white) */}
-                    <span className={`text-[4.5pt] font-bold uppercase tracking-[0.2em] mb-0.5 ${isCOD ? 'text-white' : 'text-black'}`}>
+                    <span className="text-[4.5pt] font-bold uppercase tracking-[0.2em] mb-0.5 text-black">
                         {isCOD ? 'Collect Amount' : 'Total Amount'}
                     </span>
                     
                     <div className="flex items-baseline gap-0.5">
-                        <span className={`text-[10pt] font-bold ${isCOD ? 'text-white' : 'text-black'}`}>$</span>
-                        <SmartText isDesignMode={isDesignMode} initialValue={data.total} baseSize={20} bold font="sans" className="tracking-tighter leading-none" />
+                        <span className="text-[10pt] font-bold text-black">$</span>
+                        <SmartText isDesignMode={isDesignMode} initialValue={data.total} baseSize={20} bold font="sans" className="tracking-tighter leading-none text-black" />
                     </div>
 
-                    {/* STATUS BADGE - REMOVED COLORS, STRICTLY B&W */}
-                    <div className={`mt-1 px-3 py-1 rounded-full flex items-center gap-1.5 border ${
-                        isCOD 
-                            ? 'bg-white border-white text-black' 
-                            : 'bg-white border-black text-black'
-                    }`}>
+                    {/* STATUS BADGE - MOVED UP SLIGHTLY via mt-0.5 */}
+                    <div className="mt-0.5 px-3 py-1 rounded-full flex items-center gap-1.5 border bg-white border-black text-black">
                         {isCOD ? <AlertTriangle size={12} fill="currentColor" className="text-black" /> : <CheckCircle2 size={12} className="text-black" />}
                         <span className="text-[9pt] font-black uppercase tracking-wider leading-none">
                             {isCOD ? 'UNPAID' : 'PAID'}
