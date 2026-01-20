@@ -40,7 +40,7 @@ const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDes
         return (
             <div className="w-full h-full flex flex-col bg-white border border-black/5 box-border">
                 {/* Header */}
-                <div className="flex justify-between items-start px-3 pt-4 pb-2 border-b-2 border-black">
+                <div className="flex justify-between items-start px-3 pt-2 pb-2 border-b-2 border-black">
                     <div>
                         <div className="text-[7pt] text-gray-500 font-bold uppercase tracking-wider">Store</div>
                         <div className="text-[10pt] font-black uppercase leading-none">{data.store}</div>
@@ -52,7 +52,7 @@ const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDes
                 </div>
 
                 {/* Customer Info */}
-                <div className="px-4 py-3 bg-gray-50 border-b border-black/5">
+                <div className="px-4 py-2 bg-gray-50 border-b border-black/5">
                     <div className="flex items-center gap-2 mb-1.5">
                         <div className="w-4 h-4 rounded-full bg-black text-white flex items-center justify-center shrink-0">
                              <User size={8} />
