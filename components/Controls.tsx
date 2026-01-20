@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Margins, ThemeType } from '../types';
-import { Sliders, Layout, Zap, RotateCcw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Minus, Plus, MousePointer2, Move, Undo2, Redo2 } from 'lucide-react';
+import { Margins, ThemeType } from '../types.ts';
+import { Sliders, Layout, Zap, RotateCcw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Minus, Plus, MousePointer2, Move, Undo2, Redo2, Bold, Type, Printer } from 'lucide-react';
 
 interface ControlsProps {
   margins: Margins;
@@ -10,6 +10,8 @@ interface ControlsProps {
   onThemeChange: (theme: ThemeType) => void;
   isDesignMode: boolean;
   onDesignModeToggle: (val: boolean) => void;
+  printDensity: number;
+  onPrintDensityChange: (val: number) => void;
 }
 
 const Controls: React.FC<ControlsProps> = ({
@@ -18,7 +20,9 @@ const Controls: React.FC<ControlsProps> = ({
   currentTheme,
   onThemeChange,
   isDesignMode,
-  onDesignModeToggle
+  onDesignModeToggle,
+  printDensity,
+  onPrintDensityChange
 }) => {
   const emitDesignAction = (type: string, payload: any) => {
     window.dispatchEvent(new CustomEvent('design-action', { detail: { type, payload } }));
@@ -61,6 +65,33 @@ const Controls: React.FC<ControlsProps> = ({
       </div>
 
       <div>
+        <div className="flex items-center gap-2 text-slate-300 font-display font-bold text-sm tracking-wide mb-3">
+            <Printer className="w-4 h-4 text-brand-pink" />
+            <h3>PRINT QUALITY</h3>
+        </div>
+        <div className="bg-white/5 rounded-xl p-4 border border-white/5 backdrop-blur-sm shadow-inner">
+            <label className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-500 mb-2">
+                <span>Density / Contrast</span>
+                <span className="text-brand-pink">{printDensity}%</span>
+            </label>
+            <input 
+                type="range" 
+                min="50" 
+                max="150" 
+                step="5"
+                value={printDensity} 
+                onChange={(e) => onPrintDensityChange(parseInt(e.target.value))}
+                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-pink"
+            />
+            <div className="flex justify-between text-[9px] text-slate-600 font-mono mt-2">
+                <span>Light</span>
+                <span>Standard</span>
+                <span>Dark</span>
+            </div>
+        </div>
+      </div>
+
+      <div>
         <label className="flex items-center justify-between p-3.5 border border-white/10 rounded-xl bg-gradient-to-r from-white/5 to-transparent cursor-pointer hover:border-brand-cyan/30 transition-all group">
             <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg transition-colors ${isDesignMode ? 'bg-brand-cyan/20 text-brand-cyan' : 'bg-white/5 text-slate-500'}`}><Zap className="w-4 h-4" /></div>
@@ -76,31 +107,59 @@ const Controls: React.FC<ControlsProps> = ({
         </label>
 
         {isDesignMode && (
-          <div className="mt-4 p-4 rounded-xl bg-slate-900/80 border border-brand-cyan/20 shadow-inner">
-              <div className="flex items-center justify-between mb-3 border-b border-brand-cyan/10 pb-2">
-                  <div className="flex items-center gap-2 text-brand-cyan font-bold text-[10px] uppercase tracking-wider"><Move className="w-3 h-3" /> Precision Tuner</div>
-                  <div className="flex gap-1.5">
-                      <button onClick={() => emitDesignAction('undo', {})} className="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white"><Undo2 size={12} /></button>
-                      <button onClick={() => emitDesignAction('redo', {})} className="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white"><Redo2 size={12} /></button>
+          <div className="mt-4 p-4 rounded-xl bg-slate-900 border border-brand-cyan/20 shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-brand-cyan/20"></div>
+              
+              {/* Header Actions */}
+              <div className="flex items-center justify-between mb-5 border-b border-white/5 pb-3">
+                  <span className="text-[10px] font-bold text-brand-cyan uppercase tracking-wider flex items-center gap-1.5">
+                      <Move size={10} /> Active Selection
+                  </span>
+                  <div className="flex gap-1">
+                      <button onClick={() => emitDesignAction('undo', {})} className="w-6 h-6 flex items-center justify-center rounded bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors border border-white/5" title="Undo"><Undo2 size={12} /></button>
+                      <button onClick={() => emitDesignAction('redo', {})} className="w-6 h-6 flex items-center justify-center rounded bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors border border-white/5" title="Redo"><Redo2 size={12} /></button>
+                      <button onClick={() => emitDesignAction('reset', {})} className="w-6 h-6 flex items-center justify-center rounded bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 transition-colors" title="Reset"><RotateCcw size={10} /></button>
+                  </div>
+              </div>
+
+              <div className="grid grid-cols-[auto_1fr] gap-4">
+                  {/* D-PAD */}
+                  <div className="w-[80px] h-[80px] bg-slate-800/50 rounded-full relative border border-white/5 mx-auto shadow-inner">
+                      <button onClick={() => emitDesignAction('move', {y: -1})} className="absolute top-1 left-1/2 -translate-x-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-brand-cyan active:scale-90 hover:bg-white/5 rounded-full transition-all"><ChevronUp size={16}/></button>
+                      <button onClick={() => emitDesignAction('move', {y: 1})} className="absolute bottom-1 left-1/2 -translate-x-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-brand-cyan active:scale-90 hover:bg-white/5 rounded-full transition-all"><ChevronDown size={16}/></button>
+                      <button onClick={() => emitDesignAction('move', {x: -1})} className="absolute left-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-brand-cyan active:scale-90 hover:bg-white/5 rounded-full transition-all"><ChevronLeft size={16}/></button>
+                      <button onClick={() => emitDesignAction('move', {x: 1})} className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-brand-cyan active:scale-90 hover:bg-white/5 rounded-full transition-all"><ChevronRight size={16}/></button>
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <div className="w-3 h-3 rounded-full bg-slate-700 shadow-sm border border-white/10"></div>
+                      </div>
+                  </div>
+
+                  {/* STYLE CONTROLS */}
+                  <div className="flex flex-col gap-2 justify-center">
+                      {/* Size */}
+                      <div className="flex items-center justify-between bg-slate-800/50 p-1 rounded-lg border border-white/5">
+                          <button onClick={() => emitDesignAction('size', -1)} className="w-8 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-slate-400 hover:text-white transition-colors active:bg-brand-cyan/20"><Minus size={12}/></button>
+                          <div className="flex items-center gap-1.5 px-2">
+                              <Type size={10} className="text-slate-500" />
+                              <span className="text-[9px] font-bold text-slate-300">SIZE</span>
+                          </div>
+                          <button onClick={() => emitDesignAction('size', 1)} className="w-8 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-slate-400 hover:text-white transition-colors active:bg-brand-cyan/20"><Plus size={12}/></button>
+                      </div>
+
+                      {/* Style Toggles */}
+                      <div className="grid grid-cols-2 gap-2">
+                          <button onClick={() => emitDesignAction('style', {prop: 'bold'})} className="flex items-center justify-center gap-1.5 h-8 bg-slate-800/50 hover:bg-slate-700 border border-white/5 rounded-lg text-slate-300 hover:text-white transition-colors active:bg-brand-cyan/20 active:border-brand-cyan/50">
+                              <Bold size={12} />
+                              <span className="text-[9px] font-bold">BOLD</span>
+                          </button>
+                          {/* Future: Color or Align */}
+                          <div className="h-8 bg-slate-800/20 border border-white/5 rounded-lg opacity-30"></div>
+                      </div>
                   </div>
               </div>
               
-              <div className="flex gap-3">
-                   <div className="grid grid-cols-3 gap-1 w-[72px] shrink-0">
-                      <div /><button onClick={() => emitDesignAction('move', {y: -1})} className="h-6 bg-slate-800 rounded hover:bg-brand-cyan flex items-center justify-center"><ChevronUp size={12}/></button><div />
-                      <button onClick={() => emitDesignAction('move', {x: -1})} className="h-6 bg-slate-800 rounded hover:bg-brand-cyan flex items-center justify-center"><ChevronLeft size={12}/></button>
-                      <div className="flex items-center justify-center"><MousePointer2 size={10} className="text-slate-600"/></div>
-                      <button onClick={() => emitDesignAction('move', {x: 1})} className="h-6 bg-slate-800 rounded hover:bg-brand-cyan flex items-center justify-center"><ChevronRight size={12}/></button>
-                      <div /><button onClick={() => emitDesignAction('move', {y: 1})} className="h-6 bg-slate-800 rounded hover:bg-brand-cyan flex items-center justify-center"><ChevronDown size={12}/></button><div />
-                   </div>
-                   <div className="flex-1 flex flex-col justify-between">
-                       <div className="flex items-center justify-between bg-slate-950 p-1 rounded border border-white/10">
-                          <button onClick={() => emitDesignAction('size', -1)} className="w-6 h-6 flex items-center justify-center hover:bg-slate-800 rounded text-slate-400"><Minus size={12}/></button>
-                          <span className="text-[9px] font-bold text-slate-500 uppercase">Size</span>
-                          <button onClick={() => emitDesignAction('size', 1)} className="w-6 h-6 flex items-center justify-center hover:bg-slate-800 rounded text-slate-400"><Plus size={12}/></button>
-                       </div>
-                       <button onClick={() => emitDesignAction('reset', {})} className="w-full py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded text-[9px] font-bold flex items-center justify-center gap-1.5 mt-2"><RotateCcw size={10} /> RESET</button>
-                   </div>
+              <div className="mt-4 text-[9px] text-slate-500 text-center font-mono border-t border-white/5 pt-2">
+                  <span className="text-brand-cyan/70">★</span> Click element to select & edit
               </div>
           </div>
         )}
@@ -109,9 +168,9 @@ const Controls: React.FC<ControlsProps> = ({
       <div>
         <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2 text-slate-300 font-display font-bold text-sm tracking-wide"><Sliders className="w-4 h-4 text-brand-cyan" /><h3>AXIS CONTROL</h3></div>
-            <button onClick={() => { if(confirm('Restore defaults?')) { localStorage.clear(); window.location.reload(); } }} className="p-1.5 rounded-md hover:bg-red-500/10 text-slate-600 hover:text-red-400"><RotateCcw className="w-3.5 h-3.5" /></button>
+            <button onClick={() => { if(confirm('Restore defaults?')) { localStorage.clear(); window.location.reload(); } }} className="p-1.5 rounded-md hover:bg-red-500/10 text-slate-600 hover:text-red-400 transition-colors"><RotateCcw className="w-3.5 h-3.5" /></button>
         </div>
-        <div className="bg-white/5 rounded-xl p-4 border border-white/5 backdrop-blur-sm">
+        <div className="bg-white/5 rounded-xl p-4 border border-white/5 backdrop-blur-sm shadow-inner">
             <div className="grid grid-cols-2 gap-4 mb-4">
                 <InputField label="Top (Y+)" prop="top" /><InputField label="Right (X+)" prop="right" />
                 <InputField label="Bottom (Y-)" prop="bottom" /><InputField label="Left (X-)" prop="left" />

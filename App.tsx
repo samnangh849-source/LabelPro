@@ -84,6 +84,7 @@ const App: React.FC = () => {
   const [margins, setMargins] = useState<Margins>({
     top: 0, right: 0, bottom: 0, left: 0, lineLeft: 0, lineRight: 2
   });
+  const [printDensity, setPrintDensity] = useState(100);
   
   useEffect(() => {
     if (data.store === 'Flexi Gear') setTheme(ThemeType.FLEXI);
@@ -103,11 +104,19 @@ const App: React.FC = () => {
       lineLeft: loadMargin('lineLeft'),
       lineRight: localStorage.getItem('label_lineRight') ? parseFloat(localStorage.getItem('label_lineRight')!) : 2
     });
+
+    const savedDensity = localStorage.getItem('label_density');
+    if (savedDensity) setPrintDensity(parseInt(savedDensity));
   }, []);
 
   const handleMarginChange = (key: keyof Margins, value: number) => {
     setMargins(prev => ({ ...prev, [key]: value }));
     localStorage.setItem(`label_${key}`, value.toString());
+  };
+
+  const handleDensityChange = (val: number) => {
+    setPrintDensity(val);
+    localStorage.setItem('label_density', val.toString());
   };
 
   const handlePrint = (target: 'label' | 'qr') => {
@@ -142,6 +151,8 @@ const App: React.FC = () => {
                 onThemeChange={setTheme}
                 isDesignMode={isDesignMode}
                 onDesignModeToggle={setIsDesignMode}
+                printDensity={printDensity}
+                onPrintDensityChange={handleDensityChange}
             />
         </div>
 
@@ -186,6 +197,7 @@ const App: React.FC = () => {
                         theme={theme}
                         margins={margins}
                         isDesignMode={isDesignMode}
+                        printDensity={printDensity}
                     />
                 </div>
             </div>

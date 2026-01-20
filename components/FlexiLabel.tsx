@@ -1,6 +1,7 @@
+
 import React from 'react';
-import { LabelData } from '../types';
-import { SmartText, SmartQR } from './SmartElements';
+import { LabelData } from '../types.ts';
+import { SmartText, SmartQR } from './SmartElements.tsx';
 import { MapPin, Phone, User, Box, ArrowDownRight, Truck, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 interface FlexiLabelProps {
@@ -39,9 +40,6 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
   return (
     <div className="flex flex-col w-[60mm] h-[80mm] bg-white text-black font-sans relative box-border overflow-hidden">
         
-        {/* TOP DECORATIVE BAR */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-black z-10"></div>
-
         {/* 1. HEADER & STORE IDENTITY - Highly compressed to give max space to Zone BG */}
         {/* Reduced pt-2 to pt-1.5 and removed pb to pull everything up */}
         <div className="px-3 pt-1.5 pb-0 flex justify-between items-start shrink-0">
@@ -54,11 +52,13 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                     <SmartText isDesignMode={isDesignMode} initialValue={data.store} baseSize={10} bold font="sans" className="uppercase tracking-tight leading-none" />
                 </div>
                 <div className="pl-1">
-                     <SmartText isDesignMode={isDesignMode} initialValue={data.id} baseSize={8} font="mono" className="text-black/50 font-bold" />
+                     {/* ID Code: Changed from text-black/50 to text-black */}
+                     <SmartText isDesignMode={isDesignMode} initialValue={data.id} baseSize={8} font="mono" className="text-black font-bold" />
                 </div>
             </div>
             <div className="flex flex-col items-end">
-                <span className="text-[5pt] font-bold text-black/30 uppercase tracking-wider">Created</span>
+                {/* Created Label: Changed from text-black/30 to text-black */}
+                <span className="text-[5pt] font-bold text-black uppercase tracking-wider">Created</span>
                 <SmartText isDesignMode={isDesignMode} initialValue={data.date} baseSize={6.5} font="mono" bold />
             </div>
         </div>
@@ -109,13 +109,15 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
             <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-black/5 flex items-center justify-center shrink-0">
-                        <User size={8} className="text-black/60" />
+                        {/* User Icon: Changed from text-black/60 to text-black */}
+                        <User size={8} className="text-black" />
                     </div>
                     <SmartText isDesignMode={isDesignMode} initialValue={data.name} baseSize={10} bold font="sans" className="uppercase" />
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-black/5 flex items-center justify-center shrink-0">
-                        <Phone size={8} className="text-black/60" />
+                        {/* Phone Icon: Changed from text-black/60 to text-black */}
+                        <Phone size={8} className="text-black" />
                     </div>
                     <SmartText isDesignMode={isDesignMode} initialValue={data.phone} baseSize={11} bold font="sans" />
                 </div>
@@ -164,7 +166,8 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
 
                 {/* Main Price Area */}
                 <div className="flex-1 flex flex-col items-center justify-center pb-1">
-                    <span className={`text-[4.5pt] font-bold uppercase tracking-[0.2em] mb-0.5 ${isCOD ? 'text-white/50' : 'text-black/40'}`}>
+                    {/* Total/Collect Amount Label: Changed to solid text (black or white) */}
+                    <span className={`text-[4.5pt] font-bold uppercase tracking-[0.2em] mb-0.5 ${isCOD ? 'text-white' : 'text-black'}`}>
                         {isCOD ? 'Collect Amount' : 'Total Amount'}
                     </span>
                     

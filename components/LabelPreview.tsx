@@ -3,16 +3,17 @@ import React from 'react';
 import { LabelData, Margins, ThemeType } from '../types';
 import LabelContent from './LabelContent';
 import QRCode from './QRCode';
-import { Eye, Printer, MousePointer2, User, Phone, MapPin } from 'lucide-react';
+import { Eye, Printer, MousePointer2, User, Phone, MapPin, Navigation } from 'lucide-react';
 
 interface LabelPreviewProps {
   data: LabelData;
   theme: ThemeType;
   margins: Margins;
   isDesignMode: boolean;
+  printDensity: number;
 }
 
-const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDesignMode }) => {
+const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDesignMode, printDensity }) => {
   const baseUrl = "https://oder-backend-2.onrender.com/CustomerAction.html";
   const mapParam = data.mapLink ? encodeURIComponent(data.mapLink) : "";
   const qrValue = `${baseUrl}?id=${encodeURIComponent(data.id)}&name=${encodeURIComponent(data.name)}&phone=${encodeURIComponent(data.phone)}&map=${mapParam}`;
@@ -20,8 +21,8 @@ const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDes
   const getQrFooter = () => {
     const features = [];
     if (data.mapLink) features.push("Map");
-    if (data.phone) { features.push("Tel"); features.push("Tele"); }
-    return features.length > 0 ? `Links: ${features.join(" / ")}` : "Scan for Info";
+    if (data.phone) { features.push("Call"); }
+    return features.length > 0 ? `Include: ${features.join(" & ")}` : "Scan for Details";
   };
 
   const isFlexi = theme === ThemeType.FLEXI;
@@ -32,97 +33,119 @@ const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDes
     paddingRight: `${margins.right}mm`,
     paddingBottom: `${margins.bottom}mm`,
     paddingLeft: `${margins.left}mm`,
+    filter: `contrast(${printDensity}%)`, // Applies print density adjustment
   };
 
   const renderDriverCardContent = () => {
     if (isFlexi) {
         // VERTICAL LAYOUT (60mm x 80mm) - Flexi Style
         return (
-            <div className="w-full h-full flex flex-col bg-white border border-black/5 box-border">
+            <div className="w-full h-full flex flex-col bg-white border border-black/5 box-border font-sans">
                 {/* Header */}
-                <div className="flex justify-between items-start px-3 pt-2 pb-2 border-b-2 border-black">
+                <div className="flex justify-between items-start px-4 pt-3 pb-2 border-b-2 border-black bg-gray-50">
                     <div>
-                        <div className="text-[7pt] text-gray-500 font-bold uppercase tracking-wider">Store</div>
-                        <div className="text-[10pt] font-black uppercase leading-none">{data.store}</div>
+                        <div className="text-[7pt] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Store</div>
+                        <div className="text-[11pt] font-black uppercase leading-none tracking-tight">{data.store}</div>
                     </div>
                     <div className="text-right">
-                        <div className="text-[7pt] text-gray-500 font-bold uppercase tracking-wider">Order</div>
-                        <div className="text-[10pt] font-mono font-bold leading-none">{data.id}</div>
+                        <div className="text-[7pt] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Order</div>
+                        <div className="text-[11pt] font-mono font-bold leading-none text-black">{data.id}</div>
                     </div>
                 </div>
 
                 {/* Customer Info */}
-                <div className="px-4 py-2 bg-gray-50 border-b border-black/5">
-                    <div className="flex items-center gap-2 mb-1.5">
-                        <div className="w-4 h-4 rounded-full bg-black text-white flex items-center justify-center shrink-0">
-                             <User size={8} />
+                <div className="px-4 py-3 border-b border-black/5 bg-white">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center shrink-0 shadow-sm">
+                             <User size={10} />
                         </div>
-                        <span className="text-[9pt] font-bold uppercase truncate leading-none">{data.name}</span>
+                        <span className="text-[10pt] font-bold uppercase truncate leading-none text-slate-800 w-[40mm]">{data.name}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-black text-white flex items-center justify-center shrink-0">
-                             <Phone size={8} />
+                    <div className="flex items-center gap-3">
+                        <div className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center shrink-0 shadow-sm">
+                             <Phone size={10} />
                         </div>
-                        <span className="text-[10pt] font-mono font-bold leading-none">{data.phone}</span>
+                        <span className="text-[11pt] font-mono font-bold leading-none text-slate-800">{data.phone}</span>
                     </div>
                 </div>
 
-                {/* QR Code */}
-                <div className="flex-1 flex flex-col items-center justify-center p-2 relative bg-white">
-                     <div className="border-[3px] border-black p-2 rounded-xl shadow-[4px_4px_0px_rgba(0,0,0,0.1)]">
-                        <QRCode value={qrValue} size={120} />
+                {/* QR Code Area */}
+                <div className="flex-1 flex flex-col items-center justify-center p-2 relative bg-white overflow-hidden">
+                     {/* QR Container */}
+                     <div className="flex flex-col items-center gap-2 z-10">
+                         <div className="border-[3px] border-black p-1.5 rounded-xl bg-white shadow-lg">
+                            <QRCode value={qrValue} size={105} />
+                         </div>
+                         {/* Prominent Driver Scan Badge */}
+                         <div className="flex items-center gap-1.5 bg-black text-white px-4 py-1.5 rounded-full mt-1">
+                            <MapPin size={12} className="text-brand-cyan" />
+                            <span className="text-[9pt] font-black uppercase tracking-[0.15em] leading-none pt-[1px]">Driver Scan</span>
+                         </div>
                      </div>
+                     
+                     {/* Background Pattern */}
+                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '10px 10px' }}></div>
                 </div>
 
                 {/* Footer */}
-                <div className="bg-black text-white p-2.5 text-center">
-                     <div className="flex items-center justify-center gap-1.5 mb-0.5">
-                        <MapPin size={14} className="text-brand-cyan animate-pulse" />
-                        <span className="text-[10pt] font-black uppercase tracking-[0.2em]">Driver Scan</span>
-                     </div>
-                     <div className="text-[6pt] text-white/60 font-mono uppercase tracking-wider">{getQrFooter()}</div>
+                <div className="bg-gray-100 text-center py-1.5 border-t border-gray-200">
+                     <div className="text-[6pt] text-gray-400 font-mono uppercase tracking-widest">{getQrFooter()}</div>
                 </div>
             </div>
         );
     } else {
         // LANDSCAPE LAYOUT (80mm x 60mm) - Acc Style
         return (
-            <div className="w-full h-full flex bg-white p-3 gap-3 box-border">
+            <div className="w-full h-full flex bg-white p-3 gap-3 box-border font-sans">
                  {/* Left Column: Info */}
-                 <div className="w-[32mm] flex flex-col justify-between shrink-0">
-                     <div className="border-l-[3px] border-black pl-2 pt-1 pb-2">
-                        <div className="text-[6pt] text-gray-400 font-bold uppercase tracking-wider">Store Identity</div>
+                 <div className="w-[30mm] flex flex-col justify-between shrink-0 py-1">
+                     <div className="border-l-[3px] border-black pl-2.5 pt-1 pb-2">
+                        <div className="text-[6pt] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Identity</div>
                         <div className="text-[9pt] font-black uppercase leading-none mb-1">{data.store}</div>
                         <div className="text-[10pt] font-mono font-bold text-gray-800 leading-none">#{data.id}</div>
                      </div>
                      
-                     <div className="space-y-2">
+                     <div className="space-y-3 pl-1">
                         <div>
-                            <span className="text-[6pt] text-gray-400 font-bold uppercase block mb-0.5">Delivery To</span>
+                            <span className="text-[6pt] text-gray-400 font-bold uppercase block mb-0.5">Customer</span>
                             <div className="flex items-center gap-1.5">
                                 <User size={12} className="text-black" />
-                                <span className="text-[9pt] font-bold uppercase leading-tight truncate block w-full">{data.name}</span>
+                                <span className="text-[9pt] font-bold uppercase leading-tight truncate block w-[24mm]">{data.name}</span>
                             </div>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                            <Phone size={12} className="text-black" />
-                            <span className="text-[10pt] font-mono font-bold leading-none">{data.phone}</span>
+                        <div>
+                            <span className="text-[6pt] text-gray-400 font-bold uppercase block mb-0.5">Contact</span>
+                            <div className="flex items-center gap-1.5">
+                                <Phone size={12} className="text-black" />
+                                <span className="text-[9pt] font-mono font-bold leading-none">{data.phone}</span>
+                            </div>
                         </div>
                      </div>
 
-                     <div className="mt-1 flex gap-1">
-                        <span className="bg-black text-white px-2 py-1 rounded text-[6pt] font-bold uppercase tracking-wider">Map</span>
-                        <span className="bg-black text-white px-2 py-1 rounded text-[6pt] font-bold uppercase tracking-wider">Call</span>
+                     <div className="mt-auto pl-1">
+                        <div className="text-[6pt] text-gray-400 font-bold uppercase tracking-wider">Features</div>
+                        <div className="flex gap-1 mt-0.5">
+                             <div className="w-1.5 h-1.5 rounded-full bg-black"></div>
+                             <div className="w-1.5 h-1.5 rounded-full bg-black"></div>
+                             <div className="w-1.5 h-1.5 rounded-full bg-black"></div>
+                        </div>
                      </div>
                  </div>
 
-                 {/* Right Column: QR */}
-                 <div className="flex-1 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center p-2 relative">
-                      <QRCode value={qrValue} size={110} />
-                      <div className="absolute bottom-1 right-2 flex items-center gap-1 opacity-50">
-                        <MapPin size={10} />
-                        <span className="text-[6pt] font-bold uppercase">Scan</span>
+                 {/* Right Column: QR - Enhanced */}
+                 <div className="flex-1 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center p-2 relative overflow-hidden">
+                      <div className="z-10 bg-white p-1.5 rounded-lg border border-black/5 shadow-sm mb-2">
+                        <QRCode value={qrValue} size={90} />
                       </div>
+                      
+                      <div className="z-10 flex items-center gap-1.5 bg-black text-white px-3 py-1 rounded-full">
+                        <Navigation size={10} className="text-white fill-current" />
+                        <span className="text-[7pt] font-black uppercase tracking-wider leading-none pt-[1px]">Driver Scan</span>
+                      </div>
+
+                      {/* Decorative Corner */}
+                      <div className="absolute top-0 right-0 w-8 h-8 bg-black/5 rounded-bl-3xl -mr-4 -mt-4"></div>
+                      <div className="absolute bottom-0 left-0 w-8 h-8 bg-black/5 rounded-tr-3xl -ml-4 -mb-4"></div>
                  </div>
             </div>
         );
