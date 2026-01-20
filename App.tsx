@@ -117,7 +117,8 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-dark-950 font-sans text-slate-300 overflow-hidden selection:bg-brand-cyan/30 selection:text-brand-cyan">
+    // Use h-dvh for better mobile/hosted support, fallback to h-screen
+    <div className="flex h-screen supports-[height:100dvh]:h-[100dvh] bg-dark-950 font-sans text-slate-300 overflow-hidden selection:bg-brand-cyan/30 selection:text-brand-cyan">
       <div className="fixed inset-0 pointer-events-none no-print">
          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-brand-purple/10 blur-[120px]"></div>
          <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-brand-cyan/10 blur-[120px]"></div>
@@ -158,7 +159,7 @@ const App: React.FC = () => {
       </aside>
 
       <main className="flex-1 flex flex-col relative overflow-hidden z-10">
-        <header className="h-16 border-b border-white/5 flex items-center justify-between px-8 no-print glass-panel bg-transparent">
+        <header className="h-16 border-b border-white/5 flex items-center justify-between px-8 no-print glass-panel bg-transparent shrink-0">
             <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 text-slate-400 text-xs uppercase tracking-widest font-bold">
                     <Command className="w-3 h-3" /> System Status
@@ -174,55 +175,87 @@ const App: React.FC = () => {
             </div>
         </header>
 
-        <div className="flex-1 overflow-auto p-8 flex items-center justify-center relative bg-dark-950/50">
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
-            <div className="w-full max-w-6xl relative z-10">
-                <LabelPreview 
-                    data={data}
-                    theme={theme}
-                    margins={margins}
-                    isDesignMode={isDesignMode}
-                />
+        {/* Improved Scroll Container Structure */}
+        <div className="flex-1 overflow-y-auto relative bg-dark-950/50">
+            {/* The min-h-full wrapper ensures vertical centering when content is small, but allows scrolling when content is large */}
+            <div className="min-h-full flex flex-col items-center justify-center p-8 pb-24">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+                <div className="w-full max-w-6xl relative z-10">
+                    <LabelPreview 
+                        data={data}
+                        theme={theme}
+                        margins={margins}
+                        isDesignMode={isDesignMode}
+                    />
+                </div>
             </div>
         </div>
       </main>
 
       <style>{`
         @media print {
-            @page { size: 80mm 60mm; margin: 0; }
-            body { background: white !important; color: black !important; margin: 0 !important; width: 80mm; height: 60mm; }
+            @page { 
+                size: 80mm 60mm; 
+                margin: 0; 
+            }
+            html, body { 
+                width: 80mm !important; 
+                height: 60mm !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                overflow: hidden !important; 
+                background: white !important;
+            }
+            
+            /* Force exact color printing (important for QR and black headers) */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
             .no-print { display: none !important; }
             #root, #root > div { display: block !important; height: auto !important; }
             
-            /* Logic to rotate vertical content for Flexi Gear onto landscape 80x60 paper */
+            /* Global reset for the label container */
             .printable-label { 
-              transform-origin: center !important;
-              box-shadow: none !important; 
-              margin: 0 !important; 
-              border: none !important;
-              position: absolute !important;
+              position: fixed !important;
               top: 50% !important;
               left: 50% !important;
+              margin: 0 !important; 
+              padding: 0; /* Margins are handled via inline-style padding */
+              border: none !important;
+              box-shadow: none !important;
               z-index: 9999 !important;
               page-break-after: always;
+              border-radius: 0 !important;
+              transform-origin: center center !important;
             }
 
-            /* Theme specific rotation logic */
+            /* Theme: Flexi Gear (60x80) */
+            /* ROTATE -90deg to fit onto 80x60 paper */
             .theme-flexi-gear {
                 width: 60mm !important;
                 height: 80mm !important;
-                /* Center 60x80 inside 80x60 paper then rotate */
+                /* Translate to center, then rotate. Since 60 becomes height and 80 becomes width, it fits 80x60 perfectly */
                 transform: translate(-50%, -50%) rotate(-90deg) !important;
             }
 
+            /* Theme: ACC Store (80x60) */
+            /* No rotation needed, just center */
             .theme-acc-store {
                 width: 80mm !important;
                 height: 60mm !important;
                 transform: translate(-50%, -50%) !important;
             }
 
+            /* Toggle visibility based on print mode */
             body.print-mode-label .qr-preview-container { display: none !important; }
             body.print-mode-qr .label-preview-container { display: none !important; }
+            
+            /* Ensure the hidden container doesn't take up layout space */
+            body.print-mode-label .label-preview-container { display: block !important; position: absolute; top:0; left:0; }
+            body.print-mode-qr .qr-preview-container { display: block !important; position: absolute; top:0; left:0; }
         }
       `}</style>
     </div>

@@ -54,13 +54,22 @@ export const SmartText: React.FC<SmartTextProps> = ({
   }, [baseSize, bold]);
 
   const saveToHistory = (newPos: {x: number, y: number}, newSize: number, newBold: boolean) => {
-    setHistory(prev => {
-      const updated = prev.slice(0, historyIndex + 1);
-      const last = updated[updated.length - 1];
-      if (last && last.pos.x === newPos.x && last.pos.y === newPos.y && last.size === newSize && last.isBold === newBold) return prev;
-      return [...updated, { pos: { ...newPos }, size: newSize, isBold: newBold }];
-    });
-    setHistoryIndex(prev => prev + 1);
+    // Get valid history up to current point (discarding any redo-able future if we make a new change)
+    const currentHistory = history.slice(0, historyIndex + 1);
+    const last = currentHistory[currentHistory.length - 1];
+
+    // Prevent duplicate states
+    if (last && 
+        last.pos.x === newPos.x && 
+        last.pos.y === newPos.y && 
+        last.size === newSize && 
+        last.isBold === newBold) {
+        return;
+    }
+
+    const nextHistory = [...currentHistory, { pos: { ...newPos }, size: newSize, isBold: newBold }];
+    setHistory(nextHistory);
+    setHistoryIndex(nextHistory.length - 1);
   };
 
   useEffect(() => {
@@ -84,15 +93,24 @@ export const SmartText: React.FC<SmartTextProps> = ({
              saveToHistory(pos, size, newBold);
         }
         if (type === 'undo' && historyIndex > 0) {
-            const prevState = history[historyIndex - 1];
-            setPos(prevState.pos); setSize(prevState.size); setIsBoldState(prevState.isBold); setHistoryIndex(historyIndex - 1);
+            const prevIndex = historyIndex - 1;
+            const prevState = history[prevIndex];
+            setPos(prevState.pos); 
+            setSize(prevState.size); 
+            setIsBoldState(prevState.isBold); 
+            setHistoryIndex(prevIndex);
         }
         if (type === 'redo' && historyIndex < history.length - 1) {
-            const nextState = history[historyIndex + 1];
-            setPos(nextState.pos); setSize(nextState.size); setIsBoldState(nextState.isBold); setHistoryIndex(historyIndex + 1);
+            const nextIndex = historyIndex + 1;
+            const nextState = history[nextIndex];
+            setPos(nextState.pos); 
+            setSize(nextState.size); 
+            setIsBoldState(nextState.isBold); 
+            setHistoryIndex(nextIndex);
         }
         if (type === 'reset') {
-             setPos({x:0, y:0}); setSize(baseSize); setIsBoldState(bold); saveToHistory({x:0, y:0}, baseSize, bold);
+             setPos({x:0, y:0}); setSize(baseSize); setIsBoldState(bold); 
+             saveToHistory({x:0, y:0}, baseSize, bold);
         }
     };
 
@@ -103,8 +121,6 @@ export const SmartText: React.FC<SmartTextProps> = ({
   useEffect(() => {
     if (!isSelected) return;
     
-    // Using mousedown to capture clicks before they might trigger other UI changes, 
-    // and explicitly checking if the click is within the design controls sidebar.
     const handleClickOutside = (e: MouseEvent) => {
         const target = e.target as HTMLElement;
         if (target.closest('#design-sidebar')) {
@@ -119,8 +135,7 @@ export const SmartText: React.FC<SmartTextProps> = ({
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!isDesignMode) return;
-    e.stopPropagation(); // Prevents bubbling up which might trigger deselect if not handled carefully
-    // We don't preventDefault here to allow text selection if needed, but for drag we might want to.
+    e.stopPropagation(); 
     e.preventDefault(); 
     
     if (!isSelected) setIsSelected(true);
@@ -179,7 +194,6 @@ export const SmartText: React.FC<SmartTextProps> = ({
       style={style}
     >
       {text}
-      {/* Visual Handles for Selection */}
       {isSelected && (
         <>
             <div className="absolute -top-1 -left-1 w-2 h-2 bg-brand-cyan border border-white rounded-full"></div>
@@ -204,13 +218,19 @@ export const SmartQR: React.FC<{ value: string, baseSize: number, isDesignMode: 
     const hasMoved = useRef(false);
 
     const saveToHistory = (newPos: {x: number, y: number}, newSize: number) => {
-        setHistory(prev => {
-          const updated = prev.slice(0, historyIndex + 1);
-          const last = updated[updated.length - 1];
-          if (last && last.pos.x === newPos.x && last.pos.y === newPos.y && last.size === newSize) return prev;
-          return [...updated, { pos: { ...newPos }, size: newSize }];
-        });
-        setHistoryIndex(prev => prev + 1);
+        const currentHistory = history.slice(0, historyIndex + 1);
+        const last = currentHistory[currentHistory.length - 1];
+
+        if (last && 
+            last.pos.x === newPos.x && 
+            last.pos.y === newPos.y && 
+            last.size === newSize) {
+            return;
+        }
+
+        const nextHistory = [...currentHistory, { pos: { ...newPos }, size: newSize }];
+        setHistory(nextHistory);
+        setHistoryIndex(nextHistory.length - 1);
     };
 
     useEffect(() => {
@@ -226,15 +246,20 @@ export const SmartQR: React.FC<{ value: string, baseSize: number, isDesignMode: 
                 setSize(newSize); saveToHistory(pos, newSize);
             }
             if (type === 'undo' && historyIndex > 0) {
-                const prevState = history[historyIndex - 1];
-                setPos(prevState.pos); setSize(prevState.size); setHistoryIndex(historyIndex - 1);
+                const prevIndex = historyIndex - 1;
+                const prevState = history[prevIndex];
+                setPos(prevState.pos); setSize(prevState.size); 
+                setHistoryIndex(prevIndex);
             }
             if (type === 'redo' && historyIndex < history.length - 1) {
-                const nextState = history[historyIndex + 1];
-                setPos(nextState.pos); setSize(nextState.size); setHistoryIndex(historyIndex + 1);
+                const nextIndex = historyIndex + 1;
+                const nextState = history[nextIndex];
+                setPos(nextState.pos); setSize(nextState.size); 
+                setHistoryIndex(nextIndex);
             }
             if (type === 'reset') {
-                setPos({x:0, y:0}); setSize(baseSize); saveToHistory({x:0, y:0}, baseSize);
+                setPos({x:0, y:0}); setSize(baseSize); 
+                saveToHistory({x:0, y:0}, baseSize);
             }
         };
         window.addEventListener('design-action', handleDesignAction);
