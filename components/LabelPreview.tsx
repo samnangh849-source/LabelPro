@@ -39,10 +39,11 @@ const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDes
   const renderDriverCardContent = () => {
     if (isFlexi) {
         // VERTICAL LAYOUT (60mm x 80mm) - Flexi Style
+        // Adjusted padding and sizing to prevent truncation of QR/Badge
         return (
             <div className="w-full h-full flex flex-col bg-white border border-black/5 box-border font-sans">
-                {/* Header */}
-                <div className="flex justify-between items-start px-4 pt-3 pb-2 border-b-2 border-black bg-gray-50">
+                {/* Header - Compacted */}
+                <div className="flex justify-between items-start px-4 pt-2 pb-1.5 bg-gray-50 shrink-0">
                     <div>
                         <div className="text-[7pt] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Store</div>
                         <div className="text-[11pt] font-black uppercase leading-none tracking-tight">{data.store}</div>
@@ -53,33 +54,35 @@ const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDes
                     </div>
                 </div>
 
-                {/* Customer Info */}
-                <div className="px-4 py-3 border-b border-black/5 bg-white">
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center shrink-0 shadow-sm">
+                {/* Customer Info - Compacted */}
+                <div className="px-4 py-2 border-b border-black/5 bg-white shrink-0">
+                    <div className="flex items-center gap-3 mb-1.5">
+                        <div className="w-5 h-5 rounded-full bg-black/5 text-black flex items-center justify-center shrink-0 shadow-sm">
                              <User size={10} />
                         </div>
                         <span className="text-[10pt] font-bold uppercase truncate leading-none text-slate-800 w-[40mm]">{data.name}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center shrink-0 shadow-sm">
+                        <div className="w-5 h-5 rounded-full bg-black/5 text-black flex items-center justify-center shrink-0 shadow-sm">
                              <Phone size={10} />
                         </div>
                         <span className="text-[11pt] font-mono font-bold leading-none text-slate-800">{data.phone}</span>
                     </div>
                 </div>
 
-                {/* QR Code Area */}
-                <div className="flex-1 flex flex-col items-center justify-center p-2 relative bg-white overflow-hidden">
+                {/* QR Code Area - Flexible with min-height safety */}
+                <div className="flex-1 flex flex-col items-center justify-center p-1 relative bg-white overflow-hidden min-h-0">
                      {/* QR Container */}
-                     <div className="flex flex-col items-center gap-2 z-10">
-                         <div className="border-[3px] border-black p-1.5 rounded-xl bg-white shadow-lg">
-                            <QRCode value={qrValue} size={105} />
+                     <div className="flex flex-col items-center gap-1.5 z-10">
+                         {/* Reduced border padding */}
+                         <div className="border-[3px] border-black p-1 rounded-xl bg-white shadow-lg">
+                            {/* Adjusted Size */}
+                            <QRCode value={qrValue} size={90} />
                          </div>
                          {/* Prominent Driver Scan Badge */}
-                         <div className="flex items-center gap-1.5 bg-black text-white px-4 py-1.5 rounded-full mt-1">
-                            <MapPin size={12} className="text-brand-cyan" />
-                            <span className="text-[9pt] font-black uppercase tracking-[0.15em] leading-none pt-[1px]">Driver Scan</span>
+                         <div className="flex items-center gap-1.5 bg-black text-white px-3 py-1 rounded-full">
+                            <MapPin size={10} className="text-brand-cyan" />
+                            <span className="text-[8pt] font-black uppercase tracking-[0.15em] leading-none pt-[1px]">Driver Scan</span>
                          </div>
                      </div>
                      
@@ -87,8 +90,8 @@ const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDes
                      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '10px 10px' }}></div>
                 </div>
 
-                {/* Footer */}
-                <div className="bg-gray-100 text-center py-1.5 border-t border-gray-200">
+                {/* Footer - Compacted */}
+                <div className="bg-gray-100 text-center py-1 border-t border-gray-200 shrink-0">
                      <div className="text-[6pt] text-gray-400 font-mono uppercase tracking-widest">{getQrFooter()}</div>
                 </div>
             </div>
