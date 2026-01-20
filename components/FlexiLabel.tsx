@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { LabelData } from '../types';
-import { SmartText, SmartQR } from './SmartElements';
+import { LabelData } from '../types.ts';
+import { SmartText, SmartQR } from './SmartElements.tsx';
 import { MapPin, Phone, User, Box, ArrowDownRight, Truck, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 interface FlexiLabelProps {
@@ -18,21 +18,23 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
   const isCOD = !isPaid && totalAmount > 0;
   
   // Logic 1: Auto-scale Location (Province) based on text length
+  // REDUCED SIZES per request
   const getLocationBaseSize = (text: string) => {
     const len = text.length;
-    if (len <= 3) return 28; // Very short (e.g. KEP) -> Huge
-    if (len <= 6) return 24; // Short (e.g. Takeo) -> Big
-    if (len <= 10) return 18; // Medium (e.g. Phnom Penh)
-    return 14; // Long -> Standard
+    if (len <= 3) return 24; // Was 28 -> 24
+    if (len <= 6) return 20; // Was 24 -> 20
+    if (len <= 10) return 16; // Was 18 -> 16
+    return 12; // Was 14 -> 12
   };
 
   // Logic 2: Address fits 1 or 2 lines
   const getAddressBaseSize = (text: string) => {
     const len = text.length;
-    if (len > 100) return 7;
-    if (len > 60) return 8; // Likely 2 lines
-    if (len > 30) return 9; // Likely 1-2 lines
-    return 10; // 1 line
+    if (len > 150) return 6;
+    if (len > 110) return 7;
+    if (len > 80) return 8; 
+    if (len > 45) return 9; 
+    return 11; 
   };
 
   return (
@@ -42,9 +44,11 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-black z-10"></div>
 
         {/* 1. HEADER & STORE IDENTITY - Highly compressed to give max space to Zone BG */}
-        <div className="px-3 pt-2 pb-0.5 flex justify-between items-start shrink-0">
+        {/* Reduced pt-2 to pt-1.5 and removed pb to pull everything up */}
+        <div className="px-3 pt-1.5 pb-0 flex justify-between items-start shrink-0">
             <div className="flex flex-col">
-                <div className="flex items-center gap-1.5 mb-1">
+                {/* Reduced mb-1 to mb-0.5 to pull ID Code up */}
+                <div className="flex items-center gap-1.5 mb-0.5">
                     <div className="w-5 h-5 bg-black rounded-md flex items-center justify-center text-white">
                         <Box size={10} strokeWidth={3} />
                     </div>
@@ -62,7 +66,8 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
 
         {/* 2. MAIN LOGISTICS CARD (LOCATION & ADDRESS) */}
         {/* Changed from bg-gray-100 to bg-black for bolder look per request */}
-        <div className="mx-1 bg-black rounded-2xl p-3 flex flex-col justify-center relative overflow-hidden group grow min-h-0 text-white">
+        {/* Because header padding is reduced, this 'grow' element naturally expands upwards */}
+        <div className="mx-1 bg-black rounded-2xl p-3 flex flex-col justify-center relative overflow-hidden group grow min-h-0 text-white mt-1">
             {/* Background decoration */}
             <div className="absolute -right-2 -top-2 text-white/10 pointer-events-none">
                 <MapPin size={48} strokeWidth={1.5} />

@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { LabelData } from '../types';
-import { SmartText, SmartQR } from './SmartElements';
+import { LabelData } from '../types.ts';
+import { SmartText, SmartQR } from './SmartElements.tsx';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 interface AccLabelProps {
@@ -25,13 +25,15 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode }) => {
   };
   const paymentLabel = getPaymentLabel(data.payment);
 
-  // Dynamic Font Size logic for Address
+  // Dynamic Font Size logic for Address - Refined to prevent cutoff
   const getAddressBaseSize = (text: string) => {
     const len = text.length;
-    if (len > 120) return 6;
-    if (len > 80) return 7;
-    if (len > 40) return 8;
-    return 9;
+    if (len > 160) return 5;
+    if (len > 130) return 6;
+    if (len > 90) return 7;
+    if (len > 60) return 8;
+    if (len > 30) return 9;
+    return 10;
   };
 
   return (
