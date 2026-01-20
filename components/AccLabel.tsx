@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { LabelData } from '../types';
-import { SmartText, SmartQR } from './SmartElements';
+import { LabelData } from '../types.ts';
+import { SmartText, SmartQR } from './SmartElements.tsx';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 interface AccLabelProps {
@@ -36,9 +36,9 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode }) => {
 
   return (
     <div className="flex flex-col w-[80mm] h-[60mm] bg-white text-black font-sans relative overflow-hidden box-border p-0.5">
-        {/* Background Watermark */}
+        {/* Background Watermark - Increased opacity for print visibility */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-            <span className="text-[64pt] font-black uppercase rotate-[-25deg] opacity-[0.05] text-black">
+            <span className="text-[64pt] font-black uppercase rotate-[-25deg] opacity-[0.15] text-black">
                 {isPaid ? 'PAID' : (isCOD ? 'C.O.D' : 'ORDER')}
             </span>
         </div>
@@ -71,7 +71,8 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode }) => {
                         <div className="leading-tight">
                             {/* Location followed by detail with wrapping */}
                             <SmartText isDesignMode={isDesignMode} initialValue={data.location} baseSize={13} bold font="sans" className="mr-2 inline-block align-top" />
-                            <SmartText isDesignMode={isDesignMode} initialValue={data.address} baseSize={getAddressBaseSize(data.address)} font="sans" className="opacity-80 inline-block align-top" />
+                            {/* Address made BOLD as requested */}
+                            <SmartText isDesignMode={isDesignMode} initialValue={data.address} baseSize={getAddressBaseSize(data.address)} bold font="sans" className="opacity-80 inline-block align-top" />
                         </div>
                     </div>
                 </div>
