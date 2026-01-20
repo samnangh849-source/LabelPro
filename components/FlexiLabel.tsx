@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { LabelData } from '../types';
-import { SmartText, SmartQR } from './SmartElements';
+import { LabelData } from '../types.ts';
+import { SmartText, SmartQR } from './SmartElements.tsx';
 import { MapPin, Phone, User, Box, ArrowDownRight, Truck, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 interface FlexiLabelProps {
@@ -61,14 +61,15 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
         </div>
 
         {/* 2. MAIN LOGISTICS CARD (LOCATION & ADDRESS) */}
-        <div className="mx-1 bg-gray-100 rounded-2xl p-3 flex flex-col justify-center relative overflow-hidden group grow min-h-0">
+        {/* Changed from bg-gray-100 to bg-black for bolder look per request */}
+        <div className="mx-1 bg-black rounded-2xl p-3 flex flex-col justify-center relative overflow-hidden group grow min-h-0 text-white">
             {/* Background decoration */}
-            <div className="absolute -right-2 -top-2 text-gray-200 pointer-events-none">
+            <div className="absolute -right-2 -top-2 text-white/10 pointer-events-none">
                 <MapPin size={48} strokeWidth={1.5} />
             </div>
 
             <div className="relative z-10 flex flex-col">
-                <span className="text-[5pt] font-black uppercase text-black/40 tracking-widest mb-0.5 block">Zone / Location</span>
+                <span className="text-[5pt] font-black uppercase text-white/50 tracking-widest mb-0.5 block">Zone / Location</span>
                 {/* Auto-scaling Location */}
                 <SmartText 
                     isDesignMode={isDesignMode} 
@@ -76,28 +77,31 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                     baseSize={getLocationBaseSize(data.location)} 
                     bold 
                     font="sans" 
-                    className="uppercase leading-[0.85] tracking-tight text-black mb-0.5" 
+                    className="uppercase leading-[0.85] tracking-tight text-white mb-0.5" 
                 />
             </div>
             
-            <div className="relative z-10 pt-0.5 border-t border-black/5">
+            <div className="relative z-10 pt-0.5 border-t border-white/20">
                 <div className="flex items-start gap-1">
-                    <ArrowDownRight size={10} className="text-black/40 mt-1 shrink-0" />
+                    <ArrowDownRight size={10} className="text-white/50 mt-1 shrink-0" />
                     {/* Address handles 1 or 2 lines naturally via standard flow and line-height */}
+                    {/* Added BOLD as requested */}
                     <SmartText 
                         isDesignMode={isDesignMode} 
                         initialValue={data.address} 
                         baseSize={getAddressBaseSize(data.address)} 
                         font="sans" 
+                        bold
                         block 
-                        className="text-black/70 leading-tight font-medium" 
+                        className="text-white/90 leading-tight" 
                     />
                 </div>
             </div>
         </div>
 
         {/* 3. RECIPIENT INFO & COD INDICATOR */}
-        <div className="px-4 py-1.5 flex justify-between items-center shrink-0">
+        {/* Reduced px-4 to px-2 to move content left */}
+        <div className="px-2 py-1.5 flex justify-between items-center shrink-0">
             <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-black/5 flex items-center justify-center shrink-0">
@@ -119,7 +123,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                     <SmartText 
                         isDesignMode={isDesignMode} 
                         initialValue="(COD)" 
-                        baseSize={20} 
+                        baseSize={16} 
                         bold 
                         font="sans" 
                         className="font-black tracking-tighter text-black"
@@ -161,17 +165,17 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                     </span>
                     
                     <div className="flex items-baseline gap-0.5">
-                        <span className={`text-[10pt] font-medium ${isCOD ? 'text-white/60' : 'text-black/40'}`}>$</span>
+                        <span className={`text-[10pt] font-bold ${isCOD ? 'text-white' : 'text-black'}`}>$</span>
                         <SmartText isDesignMode={isDesignMode} initialValue={data.total} baseSize={20} bold font="sans" className="tracking-tighter leading-none" />
                     </div>
 
-                    {/* STATUS BADGE */}
+                    {/* STATUS BADGE - REMOVED COLORS, STRICTLY B&W */}
                     <div className={`mt-1 px-3 py-1 rounded-full flex items-center gap-1.5 border ${
                         isCOD 
                             ? 'bg-white border-white text-black' 
-                            : 'bg-green-100 border-green-200 text-green-800'
+                            : 'bg-white border-black text-black'
                     }`}>
-                        {isCOD ? <AlertTriangle size={12} fill="currentColor" className="text-black" /> : <CheckCircle2 size={12} className="text-green-600" />}
+                        {isCOD ? <AlertTriangle size={12} fill="currentColor" className="text-black" /> : <CheckCircle2 size={12} className="text-black" />}
                         <span className="text-[9pt] font-black uppercase tracking-wider leading-none">
                             {isCOD ? 'UNPAID' : 'PAID'}
                         </span>
