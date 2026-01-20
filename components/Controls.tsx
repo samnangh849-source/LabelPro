@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Margins, ThemeType } from '../types.ts';
+import { Margins, ThemeType } from '../types';
 import { Sliders, Layout, Zap, RotateCcw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Minus, Plus, MousePointer2, Move, Undo2, Redo2, Bold, Type, Printer } from 'lucide-react';
 
 interface ControlsProps {

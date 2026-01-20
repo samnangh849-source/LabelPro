@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { LabelData } from '../types';
 import { SmartText, SmartQR } from './SmartElements';
