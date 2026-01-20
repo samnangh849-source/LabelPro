@@ -123,7 +123,7 @@ const App: React.FC = () => {
          <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-brand-cyan/10 blur-[120px]"></div>
       </div>
 
-      <aside className="w-80 glass-panel border-r border-white/5 flex flex-col z-20 shadow-[4px_0_24px_rgba(0,0,0,0.2)] no-print relative">
+      <aside id="design-sidebar" className="w-80 glass-panel border-r border-white/5 flex flex-col z-20 shadow-[4px_0_24px_rgba(0,0,0,0.2)] no-print relative">
         <div className="h-16 flex items-center px-6 border-b border-white/5 bg-white/[0.02]">
             <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded bg-gradient-to-tr from-brand-cyan to-brand-purple flex items-center justify-center shadow-lg shadow-brand-cyan/20">
