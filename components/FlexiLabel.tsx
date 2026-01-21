@@ -103,13 +103,13 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                      {/* Separator */}
                      <span className="text-black/20 text-[8px] font-bold">|</span>
                      
-                     {/* User & Page Info */}
-                     <div className="flex items-center gap-1 min-w-0">
-                        <SmartText isDesignMode={isDesignMode} initialValue={data.user} baseSize={7} font="sans" className="text-black/60 font-medium truncate uppercase" />
+                     {/* User & Page Info - REMOVED TRUNCATE to Show All */}
+                     <div className="flex items-center gap-1">
+                        <SmartText isDesignMode={isDesignMode} initialValue={data.user} baseSize={7} font="sans" className="text-black/60 font-medium uppercase whitespace-nowrap" />
                         {data.page && (
                             <>
                                <span className="text-black/20 text-[8px] font-bold">/</span>
-                               <SmartText isDesignMode={isDesignMode} initialValue={data.page} baseSize={7} font="sans" className="text-black/60 font-medium truncate uppercase" />
+                               <SmartText isDesignMode={isDesignMode} initialValue={data.page} baseSize={7} font="sans" className="text-black/60 font-medium uppercase whitespace-nowrap" />
                             </>
                         )}
                      </div>
@@ -123,9 +123,9 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
 
         {/* 2. MAIN LOGISTICS CARD (LOCATION & ADDRESS) */}
         <div className="mx-1 mt-0.5 bg-black rounded-2xl p-3 flex flex-col justify-center relative overflow-hidden group grow min-h-0 text-white">
-            {/* Background decoration - UPDATED: White color & Thicker Stroke */}
-            <div className="absolute -right-2 -top-2 text-white/80 pointer-events-none">
-                <MapPin size={48} strokeWidth={3} />
+            {/* Background decoration - UPDATED: Whiter & Thicker Stroke */}
+            <div className="absolute -right-2 -top-2 text-white/40 pointer-events-none">
+                <MapPin size={48} strokeWidth={4} />
             </div>
 
             <div className="relative z-10 flex flex-col h-full justify-center">
