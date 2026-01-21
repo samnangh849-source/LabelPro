@@ -20,14 +20,14 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
   // Logic 1: Auto-scale Location (Province)
   const getLocationBaseSize = (text: string) => {
     const len = text.length;
-    if (len <= 3) return 34; // Ultra Large (e.g. KHM)
-    if (len <= 5) return 29; 
-    if (len <= 8) return 25; 
-    if (len <= 11) return 21; 
-    if (len <= 14) return 18; 
-    if (len <= 18) return 15;
-    if (len <= 24) return 13;
-    return 11; 
+    if (len <= 3) return 42; // Ultra Large (e.g. KHM)
+    if (len <= 5) return 32; 
+    if (len <= 8) return 26; 
+    if (len <= 11) return 22; 
+    if (len <= 14) return 19; 
+    if (len <= 18) return 16;
+    if (len <= 24) return 14;
+    return 12; 
   };
 
   // Logic 2: Address fits STRICTLY 1 or 2 lines
@@ -41,15 +41,48 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
     return 11;                 
   };
 
-  // Logic 3: Auto-scale Shipping Method to prevent overflow
+  // Logic 3: Auto-scale Shipping Method with wrapping support
   const getShippingBaseSize = (text: string) => {
     const len = text.length;
-    if (len <= 6) return 10;   // Short names (e.g. VET, J&T) - Large & Bold
-    if (len <= 10) return 9;   // Standard length
-    if (len <= 15) return 8;   // Medium length
-    if (len <= 20) return 7;   // Long names
-    return 6;                  // Very long names
+    if (len <= 8) return 11;    // Short: 1 line, Large
+    if (len <= 14) return 10;   // Medium: 1 line, Medium
+    if (len <= 20) return 9;    // Long: 1 line, Small or 2 lines Large
+    if (len <= 28) return 8.5;  // Very Long: 2 lines
+    return 7.5;                 // Extremely Long
   };
+
+  // Logic 4: Auto-scale COD Text
+  const getCODBaseSize = (text: string) => {
+    const len = text.length;
+    if (len <= 5) return 16; 
+    if (len <= 7) return 14; 
+    if (len <= 9) return 12;
+    return 10;
+  };
+
+  // Logic 5: Dynamic Price Size based on Shipping length (Vertical Space)
+  const getPriceBaseSize = (shippingLen: number, priceLen: number) => {
+      let size = 20; // Default large
+      
+      // If shipping is long (>15 chars implies wrapping or tight fit), reduce price size
+      if (shippingLen > 15) { 
+          size = 17; 
+      }
+      if (shippingLen > 25) {
+          size = 15;
+      }
+      
+      // If price string itself is long (e.g. 1000.00), scale down width-wise
+      if (priceLen > 7) {
+          size = Math.min(size, 14);
+      } else if (priceLen > 5) {
+          size = Math.min(size, 18);
+      }
+
+      return size;
+  };
+
+  const codText = "(COD)";
 
   return (
     <div className="flex flex-col w-[60mm] h-[80mm] bg-white text-black font-sans relative box-border overflow-hidden">
@@ -93,7 +126,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                 </div>
                 
                 {/* Address Section */}
-                <div className="relative z-10 pt-1 border-t border-white/20 mt-0.5">
+                <div className="relative z-10 pt-1 border-t-2 border-white mt-0.5">
                     <div className="flex items-start gap-1">
                         <ArrowDownRight size={10} className="text-white/50 mt-[3px] shrink-0" />
                         <SmartText 
@@ -132,11 +165,11 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                  <div className="flex items-center justify-center pr-1">
                     <SmartText 
                         isDesignMode={isDesignMode} 
-                        initialValue="(COD)" 
-                        baseSize={16} 
+                        initialValue={codText} 
+                        baseSize={getCODBaseSize(codText)} 
                         bold 
                         font="sans" 
-                        className="font-black tracking-tighter text-black"
+                        className="font-black tracking-tighter text-black whitespace-nowrap"
                     />
                 </div>
             )}
@@ -156,17 +189,20 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
             {/* PRICE & STATUS MODULE */}
             <div className="bg-white border border-black text-black rounded-xl flex flex-col relative overflow-hidden transition-colors duration-200">
                 
-                {/* Method Header - DYNAMIC SIZED */}
-                <div className="px-3 py-1.5 flex items-center gap-2 border-b border-dashed border-black/10">
+                {/* Method Header - DYNAMIC SIZED WITH WRAPPING */}
+                <div className="px-3 py-1.5 flex items-center gap-2 border-b border-dashed border-black/10 min-h-[32px]">
                     <Truck size={12} className="text-black shrink-0" />
-                    <SmartText 
-                        isDesignMode={isDesignMode} 
-                        initialValue={data.shipping} 
-                        baseSize={getShippingBaseSize(data.shipping)} 
-                        bold 
-                        font="sans" 
-                        className="uppercase text-black whitespace-nowrap" 
-                    />
+                    <div className="flex-1 min-w-0">
+                        <SmartText 
+                            isDesignMode={isDesignMode} 
+                            initialValue={data.shipping} 
+                            baseSize={getShippingBaseSize(data.shipping)} 
+                            bold 
+                            font="sans" 
+                            className="uppercase text-black leading-[1.1] line-clamp-2" 
+                            block
+                        />
+                    </div>
                 </div>
 
                 {/* Main Price Area */}
@@ -177,7 +213,14 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                     
                     <div className="flex items-baseline gap-0.5">
                         <span className="text-[10pt] font-bold text-black">$</span>
-                        <SmartText isDesignMode={isDesignMode} initialValue={data.total} baseSize={20} bold font="sans" className="tracking-tighter leading-none text-black" />
+                        <SmartText 
+                            isDesignMode={isDesignMode} 
+                            initialValue={data.total} 
+                            baseSize={getPriceBaseSize(data.shipping.length, data.total.length)} 
+                            bold 
+                            font="sans" 
+                            className="tracking-tighter leading-none text-black" 
+                        />
                     </div>
 
                     {/* STATUS BADGE - MOVED UP SLIGHTLY via mt-0.5 */}
