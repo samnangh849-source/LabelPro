@@ -8,6 +8,8 @@ interface FlexiLabelProps {
   data: LabelData;
   qrValue: string;
   isDesignMode: boolean;
+  printDensity?: number;
+  watermarkIntensity?: number;
 }
 
 const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) => {

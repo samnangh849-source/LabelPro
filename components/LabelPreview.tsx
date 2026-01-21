@@ -11,9 +11,10 @@ interface LabelPreviewProps {
   margins: Margins;
   isDesignMode: boolean;
   printDensity: number;
+  watermarkIntensity: number;
 }
 
-const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDesignMode, printDensity }) => {
+const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDesignMode, printDensity, watermarkIntensity }) => {
   const baseUrl = "https://oder-backend-2.onrender.com/CustomerAction.html";
   const mapParam = data.mapLink ? encodeURIComponent(data.mapLink) : "";
   const qrValue = `${baseUrl}?id=${encodeURIComponent(data.id)}&name=${encodeURIComponent(data.name)}&phone=${encodeURIComponent(data.phone)}&map=${mapParam}`;
@@ -33,7 +34,7 @@ const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDes
     paddingRight: `${margins.right}mm`,
     paddingBottom: `${margins.bottom}mm`,
     paddingLeft: `${margins.left}mm`,
-    filter: `contrast(${printDensity}%)`, // Applies print density adjustment
+    // Removed filter: contrast() to allow precise opacity control for watermark via AccLabel logic
   };
 
   const renderDriverCardContent = () => {
@@ -168,7 +169,7 @@ const LabelPreview: React.FC<LabelPreviewProps> = ({ data, theme, margins, isDes
                  )}
                  <div className={`relative bg-white transition-all duration-300 ${isDesignMode ? 'ring-2 ring-brand-cyan ring-offset-4 ring-offset-slate-900 cursor-text shadow-none' : 'shadow-[0_0_30px_rgba(255,255,255,0.1)]'}`}>
                     <div className={`printable-label overflow-hidden bg-white text-black ${isFlexi ? 'theme-flexi-gear' : 'theme-acc-store'}`} style={sheetStyle}>
-                        <LabelContent data={data} theme={theme} lineLeft={margins.lineLeft} lineRight={margins.lineRight} qrValue={qrValue} isDesignMode={isDesignMode} />
+                        <LabelContent data={data} theme={theme} lineLeft={margins.lineLeft} lineRight={margins.lineRight} qrValue={qrValue} isDesignMode={isDesignMode} printDensity={printDensity} watermarkIntensity={watermarkIntensity} />
                     </div>
                  </div>
                  <div className="mt-6 w-full flex justify-between items-center text-xs font-mono text-slate-500 no-print">

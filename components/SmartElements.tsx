@@ -11,6 +11,7 @@ export interface SmartTextProps {
   align?: 'left' | 'center' | 'right';
   font?: 'sans' | 'mono';
   block?: boolean;
+  heavy?: boolean; // New prop for Extra Bold / Black weight
 }
 
 interface StateSnapshot {
@@ -27,7 +28,8 @@ export const SmartText: React.FC<SmartTextProps> = ({
   bold = false,
   align = 'left',
   font = 'sans',
-  block = false
+  block = false,
+  heavy = false
 }) => {
   const [text, setText] = useState(initialValue);
   const [size, setSize] = useState(baseSize);
@@ -164,7 +166,7 @@ export const SmartText: React.FC<SmartTextProps> = ({
 
   const style: React.CSSProperties = {
     fontSize: `${size}pt`,
-    fontWeight: isBoldState ? 700 : 400,
+    fontWeight: isBoldState ? (heavy ? 900 : 700) : 400,
     textAlign: align,
     fontFamily: font === 'mono' ? '"JetBrains Mono", monospace' : '"Inter", "Kantumruy Pro", sans-serif',
     lineHeight: 1.4,

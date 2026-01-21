@@ -11,13 +11,15 @@ interface LabelContentProps {
   lineRight: number;
   qrValue: string;
   isDesignMode: boolean;
+  printDensity: number;
+  watermarkIntensity: number;
 }
 
-const LabelContent: React.FC<LabelContentProps> = ({ data, theme, qrValue, isDesignMode }) => {
+const LabelContent: React.FC<LabelContentProps> = ({ data, theme, qrValue, isDesignMode, printDensity, watermarkIntensity }) => {
   if (theme === ThemeType.FLEXI) {
-    return <FlexiLabel data={data} qrValue={qrValue} isDesignMode={isDesignMode} />;
+    return <FlexiLabel data={data} qrValue={qrValue} isDesignMode={isDesignMode} printDensity={printDensity} watermarkIntensity={watermarkIntensity} />;
   }
-  return <AccLabel data={data} qrValue={qrValue} isDesignMode={isDesignMode} />;
+  return <AccLabel data={data} qrValue={qrValue} isDesignMode={isDesignMode} printDensity={printDensity} watermarkIntensity={watermarkIntensity} />;
 };
 
 export default LabelContent;

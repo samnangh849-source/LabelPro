@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Margins, ThemeType } from '../types';
-import { Sliders, Layout, Zap, RotateCcw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Minus, Plus, MousePointer2, Move, Undo2, Redo2, Bold, Type, Printer } from 'lucide-react';
+import { Sliders, Layout, Zap, RotateCcw, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Minus, Plus, MousePointer2, Move, Undo2, Redo2, Bold, Type, Printer, Droplets } from 'lucide-react';
 
 interface ControlsProps {
   margins: Margins;
@@ -12,6 +12,8 @@ interface ControlsProps {
   onDesignModeToggle: (val: boolean) => void;
   printDensity: number;
   onPrintDensityChange: (val: number) => void;
+  watermarkIntensity: number;
+  onWatermarkChange: (val: number) => void;
 }
 
 const Controls: React.FC<ControlsProps> = ({
@@ -22,7 +24,9 @@ const Controls: React.FC<ControlsProps> = ({
   isDesignMode,
   onDesignModeToggle,
   printDensity,
-  onPrintDensityChange
+  onPrintDensityChange,
+  watermarkIntensity,
+  onWatermarkChange
 }) => {
   const emitDesignAction = (type: string, payload: any) => {
     window.dispatchEvent(new CustomEvent('design-action', { detail: { type, payload } }));
@@ -69,25 +73,42 @@ const Controls: React.FC<ControlsProps> = ({
             <Printer className="w-4 h-4 text-brand-pink" />
             <h3>PRINT QUALITY</h3>
         </div>
-        <div className="bg-white/5 rounded-xl p-4 border border-white/5 backdrop-blur-sm shadow-inner">
-            <label className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-500 mb-2">
-                <span>Density / Contrast</span>
-                <span className="text-brand-pink">{printDensity}%</span>
-            </label>
-            <input 
-                type="range" 
-                min="50" 
-                max="150" 
-                step="5"
-                value={printDensity} 
-                onChange={(e) => onPrintDensityChange(parseInt(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-pink"
-            />
-            <div className="flex justify-between text-[9px] text-slate-600 font-mono mt-2">
-                <span>Light</span>
-                <span>Standard</span>
-                <span>Dark</span>
+        <div className="bg-white/5 rounded-xl p-4 border border-white/5 backdrop-blur-sm shadow-inner space-y-4">
+            
+            {/* Watermark Intensity */}
+            <div>
+                <label className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-500 mb-2">
+                    <span className="flex items-center gap-1.5"><Droplets size={10} /> Watermark Boldness</span>
+                    <span className="text-brand-pink">{watermarkIntensity}%</span>
+                </label>
+                <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    step="5"
+                    value={watermarkIntensity} 
+                    onChange={(e) => onWatermarkChange(parseInt(e.target.value))}
+                    className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-pink"
+                />
             </div>
+
+            {/* Print Density (General) */}
+            <div>
+                <label className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-500 mb-2">
+                    <span>Label Density</span>
+                    <span className="text-slate-400">{printDensity}%</span>
+                </label>
+                <input 
+                    type="range" 
+                    min="50" 
+                    max="150" 
+                    step="5"
+                    value={printDensity} 
+                    onChange={(e) => onPrintDensityChange(parseInt(e.target.value))}
+                    className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-slate-500"
+                />
+            </div>
+
         </div>
       </div>
 
