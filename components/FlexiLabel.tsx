@@ -124,7 +124,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
         {/* 2. MAIN LOGISTICS CARD (LOCATION & ADDRESS) */}
         <div className="mx-1 mt-0.5 bg-black rounded-2xl p-3 flex flex-col justify-center relative overflow-hidden group grow min-h-0 text-white">
             {/* Background decoration - UPDATED: Whiter & Thicker Stroke */}
-            <div className="absolute -right-2 -top-2 text-white/40 pointer-events-none">
+            <div className="absolute -right-2 -top-2 text-white/90 pointer-events-none">
                 <MapPin size={48} strokeWidth={4} />
             </div>
 
