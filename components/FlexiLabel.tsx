@@ -48,7 +48,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
     if (len <= 14) return 10;   // Medium: 1 line, Medium
     if (len <= 20) return 9;    // Long: 1 line, Small or 2 lines Large
     if (len <= 28) return 8.5;  // Very Long: 2 lines
-    return 7.5;                 // Extremely Long
+    return 7;                   // Extremely Long - Reduced to ensure 2 lines fit
   };
 
   // Logic 4: Auto-scale COD Text
@@ -103,13 +103,13 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                      {/* Separator */}
                      <span className="text-black/20 text-[8px] font-bold">|</span>
                      
-                     {/* User & Page Info - REMOVED TRUNCATE to Show All */}
+                     {/* User & Page Info - ADDED BOLD */}
                      <div className="flex items-center gap-1">
-                        <SmartText isDesignMode={isDesignMode} initialValue={data.user} baseSize={7} font="sans" className="text-black/60 font-medium uppercase whitespace-nowrap" />
+                        <SmartText isDesignMode={isDesignMode} initialValue={data.user} baseSize={7} font="sans" bold className="text-black/60 uppercase whitespace-nowrap" />
                         {data.page && (
                             <>
                                <span className="text-black/20 text-[8px] font-bold">/</span>
-                               <SmartText isDesignMode={isDesignMode} initialValue={data.page} baseSize={7} font="sans" className="text-black/60 font-medium uppercase whitespace-nowrap" />
+                               <SmartText isDesignMode={isDesignMode} initialValue={data.page} baseSize={7} font="sans" bold className="text-black/60 uppercase whitespace-nowrap" />
                             </>
                         )}
                      </div>
@@ -205,8 +205,8 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
             {/* PRICE & STATUS MODULE */}
             <div className="bg-white border border-black text-black rounded-xl flex flex-col relative overflow-hidden transition-colors duration-200">
                 
-                {/* Method Header - DYNAMIC SIZED WITH WRAPPING */}
-                <div className="px-3 py-1.5 flex items-center gap-2 border-b border-dashed border-black/10 min-h-[32px]">
+                {/* Method Header - INCREASED TOP PADDING (pt-2.5) */}
+                <div className="px-3 pt-2.5 pb-1.5 flex items-center gap-2 border-b border-dashed border-black/10 min-h-[32px]">
                     <Truck size={12} className="text-black shrink-0" />
                     <div className="flex-1 min-w-0">
                         <SmartText 
