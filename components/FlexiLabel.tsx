@@ -89,18 +89,33 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
         
         {/* 1. HEADER & STORE IDENTITY */}
         <div className="px-3 pt-1.5 pb-0 flex justify-between items-start shrink-0">
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0 pr-2">
                 <div className="flex items-center gap-1.5 mb-0"> 
                     <div className="w-5 h-5 bg-black rounded-md flex items-center justify-center text-white">
                         <Box size={10} strokeWidth={3} />
                     </div>
                     <SmartText isDesignMode={isDesignMode} initialValue={data.store} baseSize={10} bold font="sans" className="uppercase tracking-tight leading-none" />
                 </div>
-                <div className="pl-1 -mt-[1px]"> 
-                     <SmartText isDesignMode={isDesignMode} initialValue={data.id} baseSize={8} font="mono" className="text-black font-bold" />
+                {/* ID & USER INFO ROW */}
+                <div className="pl-1 -mt-[1px] flex items-center gap-1.5 overflow-hidden"> 
+                     <SmartText isDesignMode={isDesignMode} initialValue={data.id} baseSize={8} font="mono" className="text-black font-bold whitespace-nowrap shrink-0" />
+                     
+                     {/* Separator */}
+                     <span className="text-black/20 text-[8px] font-bold">|</span>
+                     
+                     {/* User & Page Info */}
+                     <div className="flex items-center gap-1 min-w-0">
+                        <SmartText isDesignMode={isDesignMode} initialValue={data.user} baseSize={7} font="sans" className="text-black/60 font-medium truncate uppercase" />
+                        {data.page && (
+                            <>
+                               <span className="text-black/20 text-[8px] font-bold">/</span>
+                               <SmartText isDesignMode={isDesignMode} initialValue={data.page} baseSize={7} font="sans" className="text-black/60 font-medium truncate uppercase" />
+                            </>
+                        )}
+                     </div>
                 </div>
             </div>
-            <div className="flex flex-col items-end">
+            <div className="flex flex-col items-end shrink-0">
                 <span className="text-[5pt] font-bold text-black uppercase tracking-wider">Created</span>
                 <SmartText isDesignMode={isDesignMode} initialValue={data.date} baseSize={6.5} font="mono" bold className="text-black" />
             </div>
@@ -108,9 +123,9 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
 
         {/* 2. MAIN LOGISTICS CARD (LOCATION & ADDRESS) */}
         <div className="mx-1 mt-0.5 bg-black rounded-2xl p-3 flex flex-col justify-center relative overflow-hidden group grow min-h-0 text-white">
-            {/* Background decoration */}
-            <div className="absolute -right-2 -top-2 text-white/10 pointer-events-none">
-                <MapPin size={48} strokeWidth={1.5} />
+            {/* Background decoration - UPDATED: White color & Thicker Stroke */}
+            <div className="absolute -right-2 -top-2 text-white/80 pointer-events-none">
+                <MapPin size={48} strokeWidth={3} />
             </div>
 
             <div className="relative z-10 flex flex-col h-full justify-center">
@@ -128,7 +143,8 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                 {/* Address Section */}
                 <div className="relative z-10 pt-1 border-t-2 border-white mt-0.5">
                     <div className="flex items-start gap-1">
-                        <ArrowDownRight size={10} className="text-white/50 mt-[3px] shrink-0" />
+                        {/* MapPin Icon, White, Thicker Stroke */}
+                        <MapPin size={11} strokeWidth={2.5} className="text-white mt-[3px] shrink-0" />
                         <SmartText 
                             isDesignMode={isDesignMode} 
                             initialValue={data.address} 
