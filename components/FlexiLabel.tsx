@@ -87,7 +87,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
   const codText = "(COD)";
 
   return (
-    <div className="flex flex-col w-[60mm] h-[80mm] bg-white text-black font-sans relative box-border overflow-hidden">
+    <div className="flex flex-col w-full h-full bg-white text-black font-sans relative box-border overflow-hidden">
         
         {/* 1. HEADER & STORE IDENTITY */}
         <div className="px-3 pt-1.5 pb-0 flex justify-between items-start shrink-0">

@@ -44,7 +44,7 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode, printD
   const bgOpacity = watermarkIntensity / 100;
 
   return (
-    <div className="flex flex-col w-[80mm] h-[60mm] bg-white text-black font-sans relative overflow-hidden box-border p-0.5">
+    <div className="flex flex-col w-full h-full bg-white text-black font-sans relative overflow-hidden box-border p-0.5">
         {/* Background Watermark - Responsive to Watermark Intensity */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
             <span 
