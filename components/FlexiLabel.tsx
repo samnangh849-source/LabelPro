@@ -84,6 +84,15 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
       return size;
   };
 
+  // Logic 6: Auto-scale Page Name to prevent truncation
+  const getPageBaseSize = (text: string) => {
+    const len = text.length;
+    if (len > 30) return 4;
+    if (len > 22) return 5;
+    if (len > 15) return 6;
+    return 7;
+  };
+
   const codText = "(COD)";
 
   return (
@@ -106,12 +115,19 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                      <span className="text-black/20 text-[8px] font-bold">|</span>
                      
                      {/* User & Page Info - ADDED BOLD */}
-                     <div className="flex items-center gap-1">
-                        <SmartText isDesignMode={isDesignMode} initialValue={data.user} baseSize={7} font="sans" bold className="text-black/60 uppercase whitespace-nowrap" />
+                     <div className="flex items-center gap-1 min-w-0">
+                        <SmartText isDesignMode={isDesignMode} initialValue={data.user} baseSize={7} font="sans" bold className="text-black/60 uppercase whitespace-nowrap flex-shrink-0" />
                         {data.page && (
                             <>
                                <span className="text-black/20 text-[8px] font-bold">/</span>
-                               <SmartText isDesignMode={isDesignMode} initialValue={data.page} baseSize={7} font="sans" bold className="text-black/60 uppercase whitespace-nowrap" />
+                               <SmartText 
+                                    isDesignMode={isDesignMode} 
+                                    initialValue={data.page} 
+                                    baseSize={getPageBaseSize(data.page)} 
+                                    font="sans" 
+                                    bold 
+                                    className="text-black/60 uppercase whitespace-nowrap truncate" 
+                               />
                             </>
                         )}
                      </div>
