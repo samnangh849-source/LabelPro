@@ -109,7 +109,7 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode, printD
                                 <div className="flex items-center justify-center gap-0.5 mb-0.5 text-black">
                                     <CheckCircle2 size={7} className="text-black" /><span className="text-[5pt] font-black uppercase">PAID</span>
                                 </div>
-                                <SmartText isDesignMode={isDesignMode} initialValue={`$${data.total}`} baseSize={9} bold font="sans" align="center" block className="opacity-30 line-through" />
+                                <SmartText isDesignMode={isDesignMode} initialValue={`$${data.total}`} baseSize={9} bold heavy font="sans" align="center" block className="text-black" />
                             </div>
                         ) : (isCOD ? (
                             <div className="bg-black text-white rounded p-1 border-[1.5px] border-black">
@@ -135,7 +135,7 @@ const AccLabel: React.FC<AccLabelProps> = ({ data, qrValue, isDesignMode, printD
                     <span className="text-[4pt] text-black font-black">|</span>
                     <SmartText isDesignMode={isDesignMode} initialValue={data.user || "Admin"} baseSize={5.5} font="sans" bold heavy className="text-black" />
                  </div>
-                 <span className="text-[4pt] text-black opacity-40 font-bold uppercase">PRO DELIVERY SYSTEM</span>
+                 <span className="text-[4pt] text-black font-black uppercase">PRO DELIVERY SYSTEM</span>
             </div>
         </div>
     </div>
