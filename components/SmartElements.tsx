@@ -12,6 +12,7 @@ export interface SmartTextProps {
   font?: 'sans' | 'mono';
   block?: boolean;
   heavy?: boolean; // New prop for Extra Bold / Black weight
+  maxLines?: number; // New prop for line clamping
 }
 
 interface StateSnapshot {
@@ -29,7 +30,8 @@ export const SmartText: React.FC<SmartTextProps> = ({
   align = 'left',
   font = 'sans',
   block = false,
-  heavy = false
+  heavy = false,
+  maxLines
 }) => {
   const [text, setText] = useState(initialValue);
   const [size, setSize] = useState(baseSize);
@@ -169,11 +171,14 @@ export const SmartText: React.FC<SmartTextProps> = ({
     fontWeight: isBoldState ? (heavy ? 900 : 700) : 400,
     textAlign: align,
     fontFamily: font === 'mono' ? '"JetBrains Mono", monospace' : '"Inter", "Kantumruy Pro", sans-serif',
-    lineHeight: 1.4,
+    lineHeight: 1.1,
     overflowWrap: 'anywhere',
     wordBreak: 'break-word',
     cursor: isDesignMode ? 'grab' : 'default',
-    display: block ? 'block' : 'inline-block',
+    display: maxLines ? '-webkit-box' : (block ? 'block' : 'inline-block'),
+    WebkitLineClamp: maxLines,
+    WebkitBoxOrient: maxLines ? 'vertical' : undefined,
+    overflow: maxLines ? 'hidden' : undefined,
     width: block ? '100%' : 'auto',
     transform: `translate(${pos.x}px, ${pos.y}px)`,
     position: 'relative',

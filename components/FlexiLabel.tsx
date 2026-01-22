@@ -217,8 +217,9 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                             baseSize={getShippingBaseSize(data.shipping)} 
                             bold 
                             font="sans" 
-                            className="uppercase text-black leading-[1.1] line-clamp-2" 
+                            className="uppercase text-black leading-[1.1]" 
                             block
+                            maxLines={2}
                         />
                     </div>
                 </div>
