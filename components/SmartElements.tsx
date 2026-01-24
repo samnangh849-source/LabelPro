@@ -13,6 +13,7 @@ export interface SmartTextProps {
   block?: boolean;
   heavy?: boolean; // New prop for Extra Bold / Black weight
   maxLines?: number; // New prop for line clamping
+  storageKey?: string; // Unique key for LocalStorage persistence
 }
 
 interface StateSnapshot {
@@ -31,13 +32,15 @@ export const SmartText: React.FC<SmartTextProps> = ({
   font = 'sans',
   block = false,
   heavy = false,
-  maxLines
+  maxLines,
+  storageKey
 }) => {
   const [text, setText] = useState(initialValue);
   const [size, setSize] = useState(baseSize);
   const [isBoldState, setIsBoldState] = useState(bold);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [isSelected, setIsSelected] = useState(false);
+  const [isCustomized, setIsCustomized] = useState(false);
   
   const [history, setHistory] = useState<StateSnapshot[]>([{ pos: { x: 0, y: 0 }, size: baseSize, isBold: bold }]);
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -49,20 +52,52 @@ export const SmartText: React.FC<SmartTextProps> = ({
 
   useEffect(() => { setText(initialValue); }, [initialValue]);
   
-  // Sync size/bold with base props when they change dynamically
+  // 1. Load from Storage on Mount or key change
   useEffect(() => {
-    setSize(baseSize);
-    setIsBoldState(bold);
-    setHistory([{ pos: { x: 0, y: 0 }, size: baseSize, isBold: bold }]);
-    setHistoryIndex(0);
-  }, [baseSize, bold]);
+    if (storageKey) {
+        const saved = localStorage.getItem(`smart_${storageKey}`);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                setPos(parsed.pos || { x: 0, y: 0 });
+                setSize(parsed.size || baseSize);
+                setIsBoldState(parsed.isBold !== undefined ? parsed.isBold : bold);
+                setIsCustomized(true);
+                // Initialize history with saved state
+                setHistory([{ pos: parsed.pos, size: parsed.size, isBold: parsed.isBold }]);
+                setHistoryIndex(0);
+                return;
+            } catch (e) {
+                console.error("Error loading smart element state", e);
+            }
+        }
+    }
+    // If no storage, revert to not customized
+    setIsCustomized(false);
+  }, [storageKey]);
+
+  // 2. Sync with props ONLY if not customized by user
+  useEffect(() => {
+    if (!isCustomized) {
+        setSize(baseSize);
+        setIsBoldState(bold);
+        setHistory([{ pos: { x: 0, y: 0 }, size: baseSize, isBold: bold }]);
+        setHistoryIndex(0);
+    }
+  }, [baseSize, bold, isCustomized]);
+
+  // Helper to save state
+  const persistState = (newPos: {x: number, y: number}, newSize: number, newBold: boolean) => {
+      if (storageKey) {
+          localStorage.setItem(`smart_${storageKey}`, JSON.stringify({ pos: newPos, size: newSize, isBold: newBold }));
+          setIsCustomized(true);
+      }
+  };
 
   const saveToHistory = (newPos: {x: number, y: number}, newSize: number, newBold: boolean) => {
-    // Get valid history up to current point (discarding any redo-able future if we make a new change)
     const currentHistory = history.slice(0, historyIndex + 1);
     const last = currentHistory[currentHistory.length - 1];
 
-    // Prevent duplicate states
     if (last && 
         last.pos.x === newPos.x && 
         last.pos.y === newPos.y && 
@@ -74,6 +109,9 @@ export const SmartText: React.FC<SmartTextProps> = ({
     const nextHistory = [...currentHistory, { pos: { ...newPos }, size: newSize, isBold: newBold }];
     setHistory(nextHistory);
     setHistoryIndex(nextHistory.length - 1);
+    
+    // Persist to local storage
+    persistState(newPos, newSize, newBold);
   };
 
   useEffect(() => {
@@ -103,6 +141,7 @@ export const SmartText: React.FC<SmartTextProps> = ({
             setSize(prevState.size); 
             setIsBoldState(prevState.isBold); 
             setHistoryIndex(prevIndex);
+            persistState(prevState.pos, prevState.size, prevState.isBold);
         }
         if (type === 'redo' && historyIndex < history.length - 1) {
             const nextIndex = historyIndex + 1;
@@ -111,16 +150,25 @@ export const SmartText: React.FC<SmartTextProps> = ({
             setSize(nextState.size); 
             setIsBoldState(nextState.isBold); 
             setHistoryIndex(nextIndex);
+            persistState(nextState.pos, nextState.size, nextState.isBold);
         }
         if (type === 'reset') {
-             setPos({x:0, y:0}); setSize(baseSize); setIsBoldState(bold); 
+             setPos({x:0, y:0}); 
+             setSize(baseSize); 
+             setIsBoldState(bold); 
              saveToHistory({x:0, y:0}, baseSize, bold);
+             
+             // Clear storage
+             if (storageKey) {
+                 localStorage.removeItem(`smart_${storageKey}`);
+                 setIsCustomized(false);
+             }
         }
     };
 
     window.addEventListener('design-action', handleDesignAction);
     return () => window.removeEventListener('design-action', handleDesignAction);
-  }, [isSelected, isDesignMode, baseSize, bold, pos, size, isBoldState, history, historyIndex]);
+  }, [isSelected, isDesignMode, baseSize, bold, pos, size, isBoldState, history, historyIndex, storageKey]);
 
   useEffect(() => {
     if (!isSelected) return;
@@ -211,11 +259,12 @@ export const SmartText: React.FC<SmartTextProps> = ({
   );
 };
 
-export const SmartQR: React.FC<{ value: string, baseSize: number, isDesignMode: boolean }> = ({ value, baseSize, isDesignMode }) => {
+export const SmartQR: React.FC<{ value: string, baseSize: number, isDesignMode: boolean, storageKey?: string }> = ({ value, baseSize, isDesignMode, storageKey }) => {
     const [size, setSize] = useState(baseSize);
     const [pos, setPos] = useState({ x: 0, y: 0 });
     const [isSelected, setIsSelected] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [isCustomized, setIsCustomized] = useState(false);
 
     const [history, setHistory] = useState<Omit<StateSnapshot, 'isBold'>[]>([{ pos: { x: 0, y: 0 }, size: baseSize }]);
     const [historyIndex, setHistoryIndex] = useState(0);
@@ -223,6 +272,40 @@ export const SmartQR: React.FC<{ value: string, baseSize: number, isDesignMode: 
     const dragStart = useRef({ x: 0, y: 0 });
     const startPos = useRef({ x: 0, y: 0 });
     const hasMoved = useRef(false);
+
+    // Load from storage
+    useEffect(() => {
+        if (storageKey) {
+            const saved = localStorage.getItem(`smart_qr_${storageKey}`);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    setPos(parsed.pos || { x: 0, y: 0 });
+                    setSize(parsed.size || baseSize);
+                    setIsCustomized(true);
+                    setHistory([{ pos: parsed.pos, size: parsed.size }]);
+                    return;
+                } catch(e) {}
+            }
+        }
+        setIsCustomized(false);
+    }, [storageKey]);
+
+    // Sync if not customized
+    useEffect(() => {
+        if (!isCustomized) {
+            setSize(baseSize);
+            setHistory([{ pos: { x: 0, y: 0 }, size: baseSize }]);
+            setHistoryIndex(0);
+        }
+    }, [baseSize, isCustomized]);
+
+    const persistState = (newPos: {x: number, y: number}, newSize: number) => {
+        if (storageKey) {
+            localStorage.setItem(`smart_qr_${storageKey}`, JSON.stringify({ pos: newPos, size: newSize }));
+            setIsCustomized(true);
+        }
+    };
 
     const saveToHistory = (newPos: {x: number, y: number}, newSize: number) => {
         const currentHistory = history.slice(0, historyIndex + 1);
@@ -238,6 +321,7 @@ export const SmartQR: React.FC<{ value: string, baseSize: number, isDesignMode: 
         const nextHistory = [...currentHistory, { pos: { ...newPos }, size: newSize }];
         setHistory(nextHistory);
         setHistoryIndex(nextHistory.length - 1);
+        persistState(newPos, newSize);
     };
 
     useEffect(() => {
@@ -257,21 +341,27 @@ export const SmartQR: React.FC<{ value: string, baseSize: number, isDesignMode: 
                 const prevState = history[prevIndex];
                 setPos(prevState.pos); setSize(prevState.size); 
                 setHistoryIndex(prevIndex);
+                persistState(prevState.pos, prevState.size);
             }
             if (type === 'redo' && historyIndex < history.length - 1) {
                 const nextIndex = historyIndex + 1;
                 const nextState = history[nextIndex];
                 setPos(nextState.pos); setSize(nextState.size); 
                 setHistoryIndex(nextIndex);
+                persistState(nextState.pos, nextState.size);
             }
             if (type === 'reset') {
                 setPos({x:0, y:0}); setSize(baseSize); 
                 saveToHistory({x:0, y:0}, baseSize);
+                if(storageKey) {
+                    localStorage.removeItem(`smart_qr_${storageKey}`);
+                    setIsCustomized(false);
+                }
             }
         };
         window.addEventListener('design-action', handleDesignAction);
         return () => window.removeEventListener('design-action', handleDesignAction);
-    }, [isSelected, isDesignMode, baseSize, pos, size, history, historyIndex]);
+    }, [isSelected, isDesignMode, baseSize, pos, size, history, historyIndex, storageKey]);
   
     useEffect(() => {
         if (!isSelected) return;

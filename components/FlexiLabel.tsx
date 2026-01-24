@@ -105,22 +105,23 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                     <div className="w-5 h-5 bg-black rounded-md flex items-center justify-center text-white">
                         <Box size={10} strokeWidth={3} />
                     </div>
-                    <SmartText isDesignMode={isDesignMode} initialValue={data.store} baseSize={10} bold font="sans" className="uppercase tracking-tight leading-none" />
+                    <SmartText storageKey="flexi_store" isDesignMode={isDesignMode} initialValue={data.store} baseSize={10} bold font="sans" className="uppercase tracking-tight leading-none" />
                 </div>
                 {/* ID & USER INFO ROW */}
                 <div className="pl-1 -mt-[1px] flex items-center gap-1.5 overflow-hidden"> 
-                     <SmartText isDesignMode={isDesignMode} initialValue={data.id} baseSize={8} font="mono" className="text-black font-bold whitespace-nowrap shrink-0" />
+                     <SmartText storageKey="flexi_id" isDesignMode={isDesignMode} initialValue={data.id} baseSize={8} font="mono" className="text-black font-bold whitespace-nowrap shrink-0" />
                      
                      {/* Separator */}
                      <span className="text-black/20 text-[8px] font-bold">|</span>
                      
                      {/* User & Page Info - ADDED BOLD */}
                      <div className="flex items-center gap-1 min-w-0">
-                        <SmartText isDesignMode={isDesignMode} initialValue={data.user} baseSize={7} font="sans" bold className="text-black/60 uppercase whitespace-nowrap flex-shrink-0" />
+                        <SmartText storageKey="flexi_user" isDesignMode={isDesignMode} initialValue={data.user} baseSize={7} font="sans" bold className="text-black/60 uppercase whitespace-nowrap flex-shrink-0" />
                         {data.page && (
                             <>
                                <span className="text-black/20 text-[8px] font-bold">/</span>
                                <SmartText 
+                                    storageKey="flexi_page"
                                     isDesignMode={isDesignMode} 
                                     initialValue={data.page} 
                                     baseSize={getPageBaseSize(data.page)} 
@@ -135,7 +136,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
             </div>
             <div className="flex flex-col items-end shrink-0">
                 <span className="text-[5pt] font-bold text-black uppercase tracking-wider">Created</span>
-                <SmartText isDesignMode={isDesignMode} initialValue={data.date} baseSize={6.5} font="mono" bold className="text-black" />
+                <SmartText storageKey="flexi_date" isDesignMode={isDesignMode} initialValue={data.date} baseSize={6.5} font="mono" bold className="text-black" />
             </div>
         </div>
 
@@ -149,6 +150,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
             <div className="relative z-10 flex flex-col h-full justify-center">
                 <div className="mb-auto pt-0.5"> 
                     <SmartText 
+                        storageKey="flexi_location"
                         isDesignMode={isDesignMode} 
                         initialValue={data.location} 
                         baseSize={getLocationBaseSize(data.location)} 
@@ -164,6 +166,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                         {/* MapPin Icon, White, Thicker Stroke */}
                         <MapPin size={11} strokeWidth={2.5} className="text-white mt-[3px] shrink-0" />
                         <SmartText 
+                            storageKey="flexi_address"
                             isDesignMode={isDesignMode} 
                             initialValue={data.address} 
                             baseSize={getAddressBaseSize(data.address)} 
@@ -184,13 +187,13 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                     <div className="w-4 h-4 rounded-full bg-black/5 flex items-center justify-center shrink-0">
                         <User size={8} className="text-black" />
                     </div>
-                    <SmartText isDesignMode={isDesignMode} initialValue={data.name} baseSize={10} bold font="sans" className="uppercase text-black" />
+                    <SmartText storageKey="flexi_name" isDesignMode={isDesignMode} initialValue={data.name} baseSize={10} bold font="sans" className="uppercase text-black" />
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-black/5 flex items-center justify-center shrink-0">
                         <Phone size={8} className="text-black" />
                     </div>
-                    <SmartText isDesignMode={isDesignMode} initialValue={data.phone} baseSize={11} bold font="sans" className="text-black" />
+                    <SmartText storageKey="flexi_phone" isDesignMode={isDesignMode} initialValue={data.phone} baseSize={11} bold font="sans" className="text-black" />
                 </div>
             </div>
             
@@ -198,6 +201,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
             {isCOD && (
                  <div className="flex items-center justify-center pr-1">
                     <SmartText 
+                        storageKey="flexi_cod_label"
                         isDesignMode={isDesignMode} 
                         initialValue={codText} 
                         baseSize={getCODBaseSize(codText)} 
@@ -215,7 +219,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
             {/* QR MODULE */}
             <div className="bg-white border border-black rounded-xl flex flex-col items-center justify-center relative overflow-hidden pt-1 pb-0.5">
                 <div className="grow flex items-center justify-center -mt-1">
-                   <SmartQR value={qrValue} baseSize={72} isDesignMode={isDesignMode} />
+                   <SmartQR storageKey="flexi_qr" value={qrValue} baseSize={72} isDesignMode={isDesignMode} />
                 </div>
                 <span className="text-[4.5pt] font-bold uppercase tracking-wider text-black leading-none pb-0.5">(Driver Scan)</span>
             </div>
@@ -228,6 +232,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                     <Truck size={12} className="text-black shrink-0" />
                     <div className="flex-1 min-w-0">
                         <SmartText 
+                            storageKey="flexi_shipping"
                             isDesignMode={isDesignMode} 
                             initialValue={data.shipping} 
                             baseSize={getShippingBaseSize(data.shipping)} 
@@ -249,6 +254,7 @@ const FlexiLabel: React.FC<FlexiLabelProps> = ({ data, qrValue, isDesignMode }) 
                     <div className="flex items-baseline gap-0.5">
                         <span className="text-[10pt] font-bold text-black">$</span>
                         <SmartText 
+                            storageKey="flexi_total"
                             isDesignMode={isDesignMode} 
                             initialValue={data.total} 
                             baseSize={getPriceBaseSize(data.shipping.length, data.total.length)} 
