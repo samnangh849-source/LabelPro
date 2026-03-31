@@ -73,5 +73,19 @@
   <body>
     <div id="root"></div>
     <script type="module" src="./index.tsx"></script>
+    <script>
+  // រង់ចាំរហូតដល់ទំព័រ Load ពេញលេញ
+  window.addEventListener('load', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // បើប្រព័ន្ធមេបញ្ជាឱ្យ Print លឿន (autoPrint=true) វានឹងលោត Print ដោយស្វ័យប្រវត្តិ
+    if (urlParams.get('autoPrint') === 'true') {
+       setTimeout(() => {
+           window.print();
+       }, 500); // រង់ចាំកន្លះវិនាទីដើម្បីឱ្យ Barcode ឬរូបភាព Load បានពេញលេញសិន
+    }
+  });
+</script>
+
   </body>
 </html>
